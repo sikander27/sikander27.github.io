@@ -49,9 +49,9 @@ h6 {
   letter-spacing: 0;
   border-radius: 45px;
   height: auto;
-  padding: 0.8em 2.1em;
+  padding: 0.8em 0.8em;
+  margin: 10px;
 }
-
 .my-button:hover {
   cursor: pointer;
   padding: 0.8em 2.7em;
@@ -297,6 +297,12 @@ h6 {
 
 #startButtonDiv {
   margin-top: 3em;
+  height: 10px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
 }
 
 #footer-cta a {
