@@ -225,7 +225,7 @@
 			<div class="row text-center">
 				<div class="small-12 medium-6 medium-offset-3 columns">
 					<p id="logo">SK</p>
-					<p id="copyright">Copyright &copy; 2017 | Sikander Khan</p>
+					<p id="copyright">Copyright &copy; <span id="sk_date"></span> | Sikander Khan</p>
 				</div>
 			</div>
 		</footer>
@@ -234,6 +234,10 @@
 
 	</div>
 	<script src="assets/scripts/app.js" charset="utf-8"></script>
+	<script>
+	 var d = new Date();
+	document.getElementById("sk_date").innerHTML = d.getFullYear();
+	</script>
 </body>
 
 </html>
