@@ -5,25 +5,25 @@ const Portfolio = function() {
 				text: "coding",
 				weight: 12.3
 			}, {
-				text: "css3",
+				text: "CSS",
 				weight: 8
 			}, {
-				text: "javascript",
+				text: "JavaScript",
 				weight: 14
 			}, {
-				text: "jquery",
+				text: "JQuery",
 				weight: 3
 			}, {
 				text: "programming",
 				weight: 7
 			}, {
-				text: "python",
+				text: "Python",
 				weight: 10
 			}, {
-				text: "java",
+				text: "MySql",
 				weight: 9
 			}, {
-				text: "Sk27",
+				text: "C#",
 				weight: 15
 			}, {
 				text: "Php",
