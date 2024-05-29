@@ -32,15 +32,56 @@
         li:hover {
             background-color: #f0f0f0;
         }
+        .tabs {
+            display: flex;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px 4px 0 0;
+            margin-right: 5px;
+            background-color: #f0f0f0;
+        }
+        .tab.active {
+            background-color: white;
+            border-bottom: 1px solid white;
+        }
+        .tab-content {
+            display: none;
+            border: 1px solid #ccc;
+            border-radius: 0 4px 4px 4px;
+            padding: 20px;
+            background-color: white;
+        }
+        .tab-content.active {
+            display: block;
+        }
     </style>
 </head>
 <body>
-    <h1>Mumbai University College Courses</h1>
+    <h1>Mumbai University College and Courses Search</h1>
     <h6>source: <a href="https://muugadmission.samarth.edu.in/" target="_blank">https://muugadmission.samarth.edu.in/</a></h6>
-    <input type="text" id="collegeInput" placeholder="Search for college...">
-    <ul id="suggestions" class="suggestions"></ul>
-    <h2>Courses Offered</h2>
-    <ul id="courseList"></ul>
+
+    <div class="tabs">
+        <div class="tab active" data-tab="collegeTab">Search by College</div>
+        <div class="tab" data-tab="courseTab">Search by Course</div>
+    </div>
+
+    <div id="collegeTab" class="tab-content active">
+        <input type="text" id="collegeInput" placeholder="Search for college...">
+        <ul id="collegeSuggestions" class="suggestions"></ul>
+        <h2>Courses Offered</h2>
+        <ul id="collegeCourseList"></ul>
+    </div>
+
+    <div id="courseTab" class="tab-content">
+        <input type="text" id="courseInput" placeholder="Search for course...">
+        <ul id="courseSuggestions" class="suggestions"></ul>
+        <h2>Available in followin Colleges</h2>
+        <ul id="courseCollegeList"></ul>
+    </div>
 
     <script>
         // Hardcoded JSON data
@@ -3014,16 +3055,44 @@
     ]
 };
 
+        const courseData = {};
+
+        // Create a course-to-college mapping
+        Object.keys(collegeData).forEach(college => {
+            collegeData[college].forEach(course => {
+                if (!courseData[course]) {
+                    courseData[course] = [];
+                }
+                courseData[course].push(college);
+            });
+        });
+
         const collegeInput = document.getElementById('collegeInput');
-        const suggestions = document.getElementById('suggestions');
-        const courseList = document.getElementById('courseList');
+        const collegeSuggestions = document.getElementById('collegeSuggestions');
+        const collegeCourseList = document.getElementById('collegeCourseList');
 
-        collegeInput.addEventListener('input', showSuggestions);
-        collegeInput.addEventListener('focus', showSuggestions);
+        const courseInput = document.getElementById('courseInput');
+        const courseSuggestions = document.getElementById('courseSuggestions');
+        const courseCollegeList = document.getElementById('courseCollegeList');
 
-        function showSuggestions() {
+        collegeInput.addEventListener('input', showCollegeSuggestions);
+        collegeInput.addEventListener('focus', showCollegeSuggestions);
+
+        courseInput.addEventListener('input', showCourseSuggestions);
+        courseInput.addEventListener('focus', showCourseSuggestions);
+
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+                this.classList.add('active');
+                document.getElementById(this.dataset.tab).classList.add('active');
+            });
+        });
+
+        function showCollegeSuggestions() {
             const query = collegeInput.value.toLowerCase();
-            suggestions.innerHTML = '';
+            collegeSuggestions.innerHTML = '';
 
             const matchedColleges = Object.keys(collegeData).filter(college => 
                 college.toLowerCase().includes(query)
@@ -3034,23 +3103,54 @@
                 suggestionItem.textContent = college;
                 suggestionItem.addEventListener('click', () => {
                     collegeInput.value = college;
-                    displayCourses(college);
-                    suggestions.innerHTML = '';
+                    displayCollegeCourses(college);
+                    collegeSuggestions.innerHTML = '';
                 });
-                suggestions.appendChild(suggestionItem);
+                collegeSuggestions.appendChild(suggestionItem);
             });
         }
 
-        function displayCourses(college) {
-            courseList.innerHTML = '';
+        function displayCollegeCourses(college) {
+            collegeCourseList.innerHTML = '';
             if (collegeData[college]) {
                 collegeData[college].forEach(course => {
                     const courseItem = document.createElement('li');
                     courseItem.textContent = course;
-                    courseList.appendChild(courseItem);
+                    collegeCourseList.appendChild(courseItem);
                 });
             }
         }
-    </script>
+
+        function showCourseSuggestions() {
+            const query = courseInput.value.toLowerCase();
+            courseSuggestions.innerHTML = '';
+
+            const matchedCourses = Object.keys(courseData).filter(course => 
+                course.toLowerCase().includes(query)
+            );
+
+            matchedCourses.forEach(course => {
+                const suggestionItem = document.createElement('li');
+                suggestionItem.textContent = course;
+                suggestionItem.addEventListener('click', () => {
+                    courseInput.value = course;
+                    displayCourseColleges(course);
+                    courseSuggestions.innerHTML = '';
+                });
+                courseSuggestions.appendChild(suggestionItem);
+            });
+        }
+
+        function displayCourseColleges(course) {
+            courseCollegeList.innerHTML = '';
+            if (courseData[course]) {
+                courseData[course].forEach(college => {
+                    const collegeItem = document.createElement('li');
+                    collegeItem.textContent = college;
+                    courseCollegeList.appendChild(collegeItem);
+                });
+            }
+        }
+        </script>
 </body>
 </html>
