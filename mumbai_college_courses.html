@@ -1,0 +1,3056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College Courses</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        input[type="text"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        li {
+            padding: 5px;
+            border-bottom: 1px solid #ddd;
+            cursor: pointer;
+        }
+        li:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Mumbai University College Courses</h1>
+    <h6>source: <a href="https://muugadmission.samarth.edu.in/" target="_blank">https://muugadmission.samarth.edu.in/</a></h6>
+    <input type="text" id="collegeInput" placeholder="Search for college...">
+    <ul id="suggestions" class="suggestions"></ul>
+    <h2>Courses</h2>
+    <ul id="courseList"></ul>
+
+    <script>
+        // Hardcoded JSON data
+        const collegeData = {
+    "Birla College of Arts Science and Commerce , City: Thane (MU-0023)": [
+        "Bachelor in Science - (Computer Applications) (Autonomous)",
+        "Bachelor of Arts - Multimedia and Mass Communication (Autonomous)",
+        "Bachelor of Arts (Autonomous)",
+        "Bachelor of Arts(DEMO)",
+        "Bachelor of Business Administration (Honours)(Autonomous) (Sports Management)",
+        "Bachelor of Commerce (Autonomous)",
+        "Bachelor of Commerce (Autonomous) (Service Industry Management)",
+        "Bachelor of Commerce (Banking &amp;Isurance) (Autonomous)",
+        "Bachelor of Commerce(Accounting and Finance)(Autonomous)",
+        "Bachelor of Management Studies (Autonomous) (Retail Management)",
+        "Bachelor of Management Studies (E.M.E.) (Autonomous)",
+        "Bachelor of Science (Autonomous)",
+        "Bachelor of Science (Biotechnology) (Autonomous)",
+        "Bachelor of Science (Honours) (Autonomous) (Integrative Nutrition &amp;Dietetics)",
+        "Bachelor of Science (Honours) (Autonomous) (Interior Design)",
+        "Bachelor of Vocational (Autonomous) ( Business Management and Enterepreneurial Development)",
+        "Bachelor of Vocational (Autonomous) ( Cyber Security and Forensics)",
+        "Bachelor of Vocational (Autonomous) (Financial Market and Trading Operations)",
+        "Bachelor of Vocational (Autonomous) (Medical Laboratory Technology)"
+    ],
+    "Mulund College of Commerce , City: Mumbai (MU-0133)": [
+        "Bachelor in Science - (Computer Applications) (Autonomous)",
+        "Bachelor of Arts - Multimedia and Mass Communication (Autonomous)",
+        "Bachelor of Commerce - (Business Administration) (Autonomous)",
+        "Bachelor of Commerce (Autonomous)",
+        "Bachelor of Commerce (Autonomous) (Financial Markets)",
+        "Bachelor of Commerce (Banking &amp;Isurance) (Autonomous)",
+        "Bachelor of Commerce (Financial Management) (Autonomous)",
+        "Bachelor of Commerce (Management Studies)(Autonomous)",
+        "Bachelor of Commerce(Accounting and Finance)(Autonomous)",
+        "Bachelor of Management Studies (E.M.E.) (Autonomous)",
+        "Bachelor of Science (Data Science) (Autonomous)"
+    ],
+    "Sheth T J Education Societys Sheth Nanjibhai Khimjibhai Thakkar Thanawala College of Commerce and Sheth J T Thanawala Arts and Science College , City: Thane (MU-0309)": [
+        "Bachelor in Science - (Computer Applications) (Autonomous)",
+        "Bachelor of Arts",
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science (Data Science) (Autonomous)"
+    ],
+    "Alkesh Dinesh Mody Institute of Financial and Management Studies , City: Mumbai (MU-0630)": [
+        "Bachelor Management Studies"
+    ],
+    "AARAV MUCHHALA SENIOR COLLEGE ARTS COMMERCE and SCIENCE , City: Mumbai (MU-1199)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Abasaheb Marathe Arts and New Commerce Science College , City: Ratnagiri (MU-1012)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "Abhay Shishank Kendras Abhay College of Arts Commerce and Science , City: Mumbai (MU-1133)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "Abhinav Jnyan Mandir Sansathas Abhinav Jnyan Mandir Arts Science and Commerce College , City: Raigad (MU-1102)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "Abhinav Shetkari Shikshan Mandals Abhinav College of Arts Science and Commerce , City: Palghar (MU-0563)": [
+        "Bachelor of Arts",
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Adarsh Vidyaprasark Sansthas Adarsh College of Arts and Commerce , City: Thane (MU-0424)": [
+        "Bachelor of Arts",
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science"
+    ],
+    "Adivasi Pragati Mandals Com Godavari Shamrao Parulekar College of Arts Commerce and Science , City: Thane (MU-0425)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "Anjuman Himaytul Islam Senior College , Mahad , City: MUMBAI (MU-1243)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "Annasaheb Vartak College of Arts Kedarnath Malhotra College of Commerce and E S Andrades College of Science , City: Thane (MU-0361)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science",
+        "Bachelor of Science (Biotechnology)",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "B L Amlani College of Commerce and Economics M R Nathwani College of Arts , City: Mumbai (MU-0919)": [
+        "Bachelor of Arts",
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)"
+    ],
+    "Balasaheb Khardekar College , City: Sindhudurg (MU-0013)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "Bharat Shikshan Mandal Senior College of Arts, Commerce & Science, Ratnagiri , City: MUMBAI (MU-1024)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "Bhimrao Pradhan College of Arts Science and Commerce , City: Thane (MU-0921)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Bhiwandi Nizampur Nagarpalika Arts Science and Commerce College , City: Thane (MU-0022)": [
+        "Bachelor of Arts",
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Arts(DEMO)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science",
+        "Bachelor of Science (Biotechnology)",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Br Nath Pai ASC Night College , City: Sindhudurg (MU-1003)": [
+        "Bachelor of Arts"
+    ],
+    "Br Nath Pai ASC Womens College , City: Sindhudurg (MU-0404)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "Burhani College , City: Mumbai (MU-0028)": [
+        "Bachelor of Arts",
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Arts(DEMO)",
+        "Bachelor of Commerce",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Chatrapati Rajashri Shahu Maharaj Senior College , City: Ratnagiri (MU-0901)": [
+        "Bachelor of Arts"
+    ],
+    "Chembur Karnataka Sangha S Chembur Karanataka Night College , City: Mumbai (MU-1063)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "Chhatrapati Shikshan Mandals Arts and Commerce College , City: Thane (MU-0887)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "Chima Patil Shikshan Sansthas Kalyani Patil Degree College , City: Palghar (MU-1138)": [
+        "Bachelor of Arts",
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)",
+        "Bachelor of Science (Data Science)",
+        "Bachelor of Science (Hospitality Studies)"
+    ],
+    "Chinchani Tarapur Education Societys Shri Purshottamdas Laldas Shroff College of Arts and Commerce , City: Palghar (MU-0478)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science"
+    ],
+    "Cummoo Jaffer Suleman College of Arts and Commerce for Women , City: Mumbai (MU-0865)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "D G Ruparel College of Arts Science and Commerce , City: Mumbai (MU-0038)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "D J Samant Senior College of Arts Commerce and Science , City: Navi Mumbai (MU-0942)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "DR Tanajirao Chorage Senior College of Arts and Commerce , City: Ratnagiri (MU-1074)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "Daar Ul Rehmat Trusts A E Kalsekar Arts Science and Commerce Degree College , City: Thane (MU-0555)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science"
+    ],
+    "Dharmaveer Anand Dighe Saheb Mahavidyalay , City: Thane (W) (MU-1239)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "Dnyan Bharati Societys Sau Sitabai Ramkrishna Karandikar College of Commerce and Late Mehernosh Boman Burjor Irani College of Arts , City: Thane (MU-0041)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Dnyan Ganga Education Trusts College of Arts Commerce and Science , City: Thane (MU-0801)": [
+        "Bachelor of Arts",
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Dnyan Prasarak Shikshan Sansthas Rajiv Gandhi Night College of Arts and Commerce , City: Mumbai (MU-0732)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "Dnyan Prasarak Shikshan Sansthas Sandesh College of Arts Commerce and Science , City: Mumbai (MU-0556)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Science"
+    ],
+    "Dnyanvardhini Charitable Trusts Arts Commerce and Science College , City: Sindhudurg (MU-0954)": [
+        "Bachelor of Arts",
+        "Bachelor of Arts (Culinary Arts)",
+        "Bachelor of Commerce"
+    ],
+    "Dr Babasaheb Ambedkar College of Arts Science and Commerce , City: Raigad (MU-0047)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Dr Chintamanrao Deshmukh Arts and Commerce College , City: Raigad (MU-0050)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "Dr Datar Science Dr Behere Arts and Shri Pilukaka Joshi Commerce College , City: Ratnagiri (MU-0051)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science",
+        "Bachelor of Science (Biotechnology)",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Dr J B Naik Arts and Commerce College , City: Sindhudurg (MU-0834)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "Dyandeep Mandals St Joseph Arts and Commerce College , City: Thane (MU-0430)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Educational Uplift Societys Husna Abdul Malik Maddu Womens Degree College , City: Thane (MU-0587)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "Fajandar Women Degree College Vahoor , City: Raigad (MU-1204)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "Fondaghat Education Societys Arts and Commerce College , City: Sindhudurg (MU-0431)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "G B Tatha Tatyasaheb Khare Commerce Parvatibai Gurupad Dhere Arts and Shri Mahesh Janardan Bhosale Science College , City: Ratnagiri (MU-0506)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "GKS College of Arts Commerce and Science , City: Thane (MU-0221)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Gajananrao Pandurang Patil College of Arts and Science IT Kon , City: Thane (MU-0371)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "Girivasi Seva Mandals Kalyans Muralidhar Nanaji Mohite Guruji Arts and Commerce and BMS , City: Palghar (MU-0513)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science"
+    ],
+    "Gnyanodaya Degree College of Arts Science and Commerce , City: Palghar (MU-1100)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Gokhale Education Societys Arts commerce and Science College , City: Thane (MU-0064)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "Gokhale Education Societys Bhausaheb Vartak Arts Science and Commerce College , City: Mumbai (MU-0271)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Gokhale Education Societys College of Arts Commerce and Science , City: Raigad (MU-0515)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "Gokhale Education Societys Dr T K Tope Arts and Commerce Night College , City: Mumbai (MU-0065)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "Gramin Shikshan Sansthas Arts Commerce and Science College , City: Thane (MU-0595)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "Hazarimal Somani College of Arts and Science and Jayaramdas Patel College of Commerce , City: Mumbai (MU-0079)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "ICLES Motilal Jhunjhunwala Arts Science and Commerce College , City: Navi Mumbai (MU-0485)": [
+        "Bachelor of Arts",
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science",
+        "Bachelor of Science (Biotechnology)",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Indira Gandhi College of Arts and Commerce , City: Mumbai (MU-0622)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "Ismail Yusuf Arts Science and Commerce College , City: Mumbai (MU-0086)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science",
+        "Bachelor of Science (Biotechnology)",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "JMFs Vande Mataram Degree College of Arts Commerce and Science , City: Thane (MU-0925)": [
+        "Bachelor of Arts",
+        "Bachelor of Arts (Film, Television and New Media Production)",
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Commerce (Transport Management)",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Jai Tulja bhavani Bahuuddeshiya Sevabhavi Sanstha's, Samarth Arts, Commerce and Science College, Lavle , City: Mumbai (MU-1248)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "Jan Seva Sangh Sanchalit Shri Ram College of Commerce , City: Mumbai (MU-0905)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Jan Utkarsh Prabodhini Udhwas Arts Commerce Science College , City: Thane (MU-0180)": [
+        "Bachelor of Arts"
+    ],
+    "Janata Shikshan Mandals Smt Indirabai G Kulkarni Arts J B Sawant Science and Sau Jankibai Dhondu Kunte Commerce College , City: Raigad (MU-0707)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Janseva Shikshan Mandals Jaywantrao Pawar Arts Commerce and Science College , City: Thane (MU-0888)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "Jeevan Jyot Educational Charitable Trust Reena Mehta College of Science Commerce and Management Studies , City: Mumbai (MU-0601)": [
+        "Bachelor of Arts",
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science",
+        "Bachelor of Science (Data Science)",
+        "Bachelor of Science (Hospitality Studies)"
+    ],
+    "Jeevandeep Arts Commerce and Science College, Titwala, Mumbai , City: Thane (MU-1172)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "Jeevandeep Shaikshanik Sansthas Arts Commerce and Science College , City: Thane (MU-0892)": [
+        "Bachelor of Arts",
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Science"
+    ],
+    "Jeevandeep Shaikshanik Sansthas Poai Sanchalit Arts Commerce and Science College , City: Thane (MU-0605)": [
+        "Bachelor of Arts",
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science",
+        "Bachelor of Science (Data Science)"
+    ],
+    "Jeevandeep Shikshanik Sansthas Jeevandeep Arts Commerce and Science College , City: Thane (MU-1116)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "K B College of Arts and Commerce and S C College of Science for Womens , City: Thane (MU-0386)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "K D Patil College  of Arts Commerce and Science , Adivli Kalyan , City: MUMBAI (MU-1229)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "K G S Arts Commerce and Science college , City: Thane (MU-1190)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "K M Agrawal College of Arts Commerce and Science , City: Thane (MU-0435)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "K M S P Mandals Sant Rawool Maharaj Mahavidyalaya Arts and Commerce , City: Sindhudurg (MU-0097)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "K.M.E. Society's Night Degree College of Arts and Commerce, Rais High School Campus, Bhiwandi , City: Mumbai (MU-1250)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "Kalyan Citizens Education Societys B K Birla Night Arts Science and Commerce College , City: Thane (MU-1122)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Kalyan Wholesale Merchants Education Societys Laxmen Devram Sonawane College of Arts and Commerce , City: Thane (MU-0614)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Kamaladevi College of Arts Science and Commerce , City: Thane (MU-0920)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Kamalagauri Hiru Patil Shikshan Sansthas Sadguru Vamanbaba Commerce and Science College , City: Raigad (MU-0922)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science"
+    ],
+    "Kankavli College of Arts Science and Commerce , City: Sindhudurg (MU-0244)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Karmaveer Bhaurao Patil Degree College of Arts and Commerce , City: Thane (MU-0958)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)"
+    ],
+    "Kasturi Charitable Trust Guardian Degree College of Arts Commerce and Science, Dombivali , City: Thane (MU-1178)": [
+        "Bachelor of Arts",
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "Katta Panchakroshi Shikshan Prasarak Mandals Dr Dadasaheb Waradkar Arts and Commerce College , City: Sindhudurg (MU-0882)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "Kharepatan Panchkroshi Shikshan Prasarak Mandal Arts and Commerce College , City: Sindhudurg (MU-0176)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "Khopoli Municipal Council College , City: Raigad (MU-0103)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Kishor R Patil Arts and Science I T College , City: Thane (MU-0264)": [
+        "Bachelor of Arts"
+    ],
+    "Kokan Gyanpeeths Uran College of Commerce and Arts , City: Raigad (MU-0722)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)"
+    ],
+    "Konkan Education Societys Laxmi Shalini Arts Commerce and Science Womens College , City: Raigad (MU-0489)": [
+        "Bachelor of Arts"
+    ],
+    "Konkan Gyanpeeths Karjat College of Arts and Commerce , City: Raigad (MU-0721)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "Konkan Unnati Mitra Mandals Vasantrao Naik College of Arts Commerce and Barrister A R Antulay Science College Mhasala , City: Raigad (MU-0357)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "Konkan Unnati Mitra Mandals Vasantrao Naik College of Arts and Commerce , City: Raigad (MU-0440)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "Late Balaram Dharma Patil Shikshan Sanstha Sanchalit Sushma Patil Senior Night College , City: Raigad (MU-1140)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "Late Parvatibai Mahadeorao Dhuri Arts College Late Mahaedeorao Narayanrao Dhuri Commerce College and College of Computer Science , City: Sindhudurg (MU-1028)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "Lokmanya Shikshan Prasarak Mandals Arts Commerce and Science College , City: Raigad (MU-0906)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "Lokmanyanagar Shikshan Mandals R J Thakur College of Arts and Commerce , City: Thane (MU-0619)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Loknete Gopinathji Munde Arts Commerce and Science Mahavidyalya , City: Ratnagiri (MU-0459)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "Loknete Shamraoji Peje Arts Commerce and Science Senior College , City: Ratnagiri (MU-0943)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "M B More Foundations Arts Commerce and Science Women College , City: Raigad (MU-0256)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "M E S Womens Degree College of Arts Commerce and Science Dapoli , City: Ratnagiri (MU-1202)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "M M Jagtap Senior College of Arts Science and Commerce , City: Raigad (MU-0962)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "M S College of Arts Commerce Science and B M S , City: Palghar (MU-1042)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "M S College of Arts Science Commerce and B M S , City: Thane (MU-0749)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)",
+        "Bachelor of Science (Hospitality Studies)"
+    ],
+    "M S P Mandals G R Patil College of Arts Science and Commerce , City: Thane (MU-0603)": [
+        "Bachelor of Arts",
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Financial Market)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science"
+    ],
+    "Mahapoli Education and Charitable Trusts Hajra Md Husain Bhure College of Arts Commerce and Science , City: Thane (MU-0714)": [
+        "Bachelor of Arts"
+    ],
+    "Maharana Pratapsinh Shikshan Sansthas Anandibai Raorane Arts Commerce and Science College , City: Sindhudurg (MU-0399)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "Maharashtra College , City: Mumbai (MU-0117)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Maharshi Dayanand College of Arts Science and Commerce , City: Mumbai (MU-0120)": [
+        "Bachelor of Arts",
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Financial Market)",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Mahatma Education Societys Pillais HOC College of Arts Science and Commerce , City: Raigad (MU-0870)": [
+        "Bachelor of Arts",
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)",
+        "Bachelor of Science (Data Science)",
+        "Bachelor of Science (Hospitality Studies)"
+    ],
+    "Mahatma Phule Arts Science and Commerce College , City: Raigad (MU-0487)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Science",
+        "Bachelor of Science (Biotechnology)"
+    ],
+    "Mahatma Phule Education Societys Night College of Arts and Commerce , City: Mumbai (MU-0550)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "Mahendra Laxman Mhatre Professional and Degree College of Arts and Commerce , City: Thane (MU-0567)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Maji Amdar Dattusheth Patil Shikshan Prasarak Mandal Sanchalit D S P College of Arts Science Science IT and Commerce , City: Raigad (MU-1144)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "Mangaon Shikshan Prasarak Mandals D G Tatkare College of Arts Science and Commerece , City: Raigad (MU-0544)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science"
+    ],
+    "Mangaon Taluka Education Societys Arts Science and Commerce College , City: Raigad (MU-0503)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "Manisha Education Trusts Smt Janakibai Rama Salvi College of Arts Commerce and Science , City: Thane (MU-0611)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Marg Tamhane Education Societys Dr Tatya Saheb Natu College of Arts and Commerce , City: Ratnagiri (MU-0445)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "Matoshree Velbai Devaji Hariya College of Arts Commerce and Science , City: Thane (MU-0602)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "Mohindar Singh Kabal Singh College of Arts and Commerce , City: Thane (MU-0616)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Banking and Insurance)"
+    ],
+    "Mohini Murari Mayekar Arts and Commerce College , City: Ratnagiri (MU-0928)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "N G Acharya and D K Marathe College of Arts Science and Commerce , City: Mumbai (MU-0135)": [
+        "Bachelor of Arts",
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Financial Market)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)",
+        "Bachelor of Science (Data Science)"
+    ],
+    "N K Varadkar College of Arts and R V Belose College of Commerce , City: Ratnagiri (MU-0136)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "NALANDA EDUCATIONAL FOUNDATION SMT KRISHNAI ARTS AND COMMERCE NIGHT COLLEGE CHEMBURW MUMBAI , City: MUMBAI (MU-1227)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "Nalanda Education Foundation Dr Babasaheb Ambedkar College of Arts Science and Commerce , City: Mumbai (MU-0828)": [
+        "Bachelor of Arts",
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science",
+        "Bachelor of Science (Hospitality Studies)"
+    ],
+    "Namita Education Welfare Societys Siddharth College , City: Thane (MU-0193)": [
+        "Bachelor of Arts",
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science"
+    ],
+    "Navneet College of Commerce and Science , City: Mumbai (MU-0979)": [
+        "Bachelor of Arts",
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)"
+    ],
+    "Navnirman Shikshan Sansthas College Of Arts commerce and Science , City: Ratnagiri (MU-0293)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science",
+        "Bachelor of Science (Hospitality Studies)"
+    ],
+    "Navnirman Shikshan Sansthas College of Arts Commerce and Science Ratnagiri , City: Ratnagiri (MU-0565)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science (Computer Science)",
+        "Bachelor of Science (Hospitality Studies)"
+    ],
+    "Navnirman Shikshan Sansthas College of Arts Science and Commerce , City: Sindhudurg (MU-0543)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science (Hospitality Studies)"
+    ],
+    "New Education Societys Arts Commerce and Science College , City: Ratnagiri (MU-0448)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Niranjalal Dalmia Education Societys N L Dalmia College , City: Thane (MU-1088)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "Nutan Bal Shikshan Sangh Sanchalit Dr Shashikala Potnis Arts and Commerce , City: Palghar (MU-1230)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "Om Vidyalankar Shikshan Sansthas Asmita College of Arts and Commerce for Women , City: Mumbai (MU-0395)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Our Lady of Grace Trusts St Gonsalo Garcia College of Arts and Commerce , City: Thane (MU-0149)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Pali Sudhagad Education Societys Seth Jamshedaji Navrousji Paliwal Commerce Arts and Science College , City: Raigad (MU-0449)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "Param Pujya Vinayak Anna Rawool Maharaj Mahavidyalaya Salgaon , City: Sindhudurg (MU-1023)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "Patpanhale Education Societys College of Arts and Commerce , City: Ratnagiri (MU-0397)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "Pen Education Societys Bhausaheb Nene Arts Science and Commerce College , City: Raigad (MU-0709)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Phanasgaon Arts and Commerce College , City: Sindhudurg (MU-0261)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "Prabhakar Patil Education Societys Arts Commerce and Science College , City: Raigad (MU-0593)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Pujya Sane Guruji Sr Arts and Commerce College , City: Ratnagiri (MU-1031)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "Pundalik Ambaji Karle Arts and Commerce Senior College Shirgaon , City: Sindhudurg (MU-1101)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "Pushpalata Mhatre Womens College of Arts Commerce and Science , City: Thane (MU-1057)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "R D National College and W A Science College , City: Mumbai (MU-0163)": [
+        "Bachelor of Arts",
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Science",
+        "Bachelor of Science (Biotechnology)",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "R K Talreja College of Arts Commerce and Science , City: Thane (MU-0164)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Financial Market)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "R K Vidya Prasar Mandals College of Arts commerce and Science College Saralgaon , City: Thane (MU-1034)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "Rahul Shikshan Prasarak Mandal Satyagraha Mahavidyalaya , City: Navi Mumbai (MU-0875)": [
+        "Bachelor of Arts",
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Rajarshri Shahu College of Arts Commerce and Science , City: Mumbai (MU-0618)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "Raosaheb Gogate College of Commerce and Smt Saraswatibai Ganshet Walke College of Arts , City: Sindhudurg (MU-0712)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "Rashtriya Shikshan Sansthas Swami Vivekanand Night College of Arts and Commerce , City: Thane (MU-0498)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "Ratnam College of Arts Science and Commerce , City: Mumbai (MU-0177)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Rayat Shikshan Sansthas Arts Science and Commerce College , City: Thane (MU-0178)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "Rayat Shikshan Sansthas Veer Wajekar Arts Science and Commerce College , City: Raigad (MU-0708)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science"
+    ],
+    "Reckon Degree collage of Arts and Commerce , City: Dist.Palghar (MU-1240)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "Rizvi Education Societys College of Arts Science and Commerce Kurla , City: Mumbai (MU-0181)": [
+        "Bachelor of Arts",
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)",
+        "Bachelor of Science (Hospitality Studies)"
+    ],
+    "Royal Education Societys Dr A R Undre Womens Degree College of Science and commerce , City: Raigad (MU-0514)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Royal Higher Education Societys College of Arts Science and Commerce , City: Thane (MU-0306)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Commerce (Management Studies)(Autonomous)",
+        "Bachelor of Commerce(Accounting and Finance)(Autonomous)",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "S I C E Societys Degree College of Arts Science and Commerce , City: Thane (MU-0961)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "S K Patil Shikshan Prasarak Mandal Sanchalit Dr Vilasrao Desai Arts Commerce and Science College , City: Sindhudurg (MU-1139)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "S K Patil Sindhudurg Mahavidyalaya , City: Sindhudurg (MU-0186)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "S K Somaiya College of Arts Science and Commerce , City: Mumbai (MU-0540)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "S P More Dnyanam Annam Foundation S P More College of Arts Commerce and Science , City: Raigad (MU-1137)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science",
+        "Bachelor of Science (Hospitality Studies)"
+    ],
+    "S P Ms N R Bhagat Senior College of Arts Commerce and Science , City: Navi Mumbai (MU-0831)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "S S D Night Degree College, Ulhasnagar , City: Mumbai (MU-1186)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "S S T College of Arts and Commerce , City: Thane (MU-0621)": [
+        "Bachelor of Arts",
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Sadhana Education Societys L S Raheja College of Arts and Commerce , City: Mumbai (MU-0307)": [
+        "Bachelor of Arts",
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Financial Market)",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Sahaj Jeevan Education Trust Sanchalit R V Patel College of Science Commerce and Arts , City: Navi Mumbai (MU-1142)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "Sahyadri Parisar Shikshan Prasarak Mandals Sahyadri College of Arts and Commerce , City: Ratnagiri (MU-0458)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "Sahyadri Shikshan Sansthas College of Arts , City: Ratnagiri (MU-1095)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "Sahyadri Shikshan Seva Mandals Arts and Commerce College , City: Thane (MU-0952)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)"
+    ],
+    "Sai Shikshan and Samajik Sanshodhan Sansthas College of Arts Commerce and Science , City: Sindhudurg (MU-0592)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "Saket Gyanpeeth College of Arts and Commerce , City: Thane (MU-0613)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Samadiya College of Arts and Commerce , City: Thane (MU-0617)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "Samyak Sankalpa College of Arts Commerce and Science , City: Thane (MU-0876)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Sanjivan Gramin Vaidyakiya and Samajik Sahayata Pratishthan College of Arts Science and Commerce , City: Thane (MU-0588)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "Sanskruti Arts Science and Commerce College, Lalonde , City: MUMBAI (MU-1188)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "Satish Pradhan Dnyansadhana Mahavidylaya Arts Science and Commerce , City: Thane (MU-0043)": [
+        "Bachelor of Arts",
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Seth Hirachand Mutha Shaikshanik Trust College of Arts Commerce and Science , City: Thane (MU-0584)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Shailendra Education Societys College of Arts Commerce and Science , City: Mumbai (MU-0460)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Shetkar Unnati Mandal Smt Pushpalata Madhukar Madhavi Mahavidyalay , City: Thane (MU-1083)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "Shikshak Sanchalit Shikshan Sansthas Arts and Commerce College , City: Thane (MU-0203)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "Shikshan Prasarak Mandal Kirbet Sanstha Arts and Commerce College , City: Ratnagiri (MU-0615)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "Shramik Shikshan Mandals F G Naik College of Arts Commerce and Science , City: Navi Mumbai (MU-0724)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "Shree Halari Visa Oswal College of Commerce , City: Thane (MU-0939)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Financial Market)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science"
+    ],
+    "Shri Chhatrapati Shivaji Education Society Late Sou S R Abhang Memorial College of Arts and Commerce , City: Thane (MU-0782)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "Shri Mahadev Baburao Chaughule Mahavidyalaya Arts Science and Commerce , City: Thane (MU-1032)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Shri Namdeo Motiram Mangaonkar Arts and Commerce Sr College Mond , City: Sindhudurg (MU-0179)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "Shri Rajasthani Seva Sanghs Smt Parmeshwari Devi Durgadutt Tibrewala Lions Juhu College of Arts Commerce and Science , City: Mumbai (MU-0168)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Financial Market)"
+    ],
+    "Shri S H Kelkar College of Arts Science and Commerce , City: Sindhudurg (MU-0182)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science",
+        "Bachelor of Vocational (Health Care)",
+        "Bachelor of Vocational(Hospitality and Tourism)"
+    ],
+    "Shri Sadguru Vamanbaba Maharaj Shikshan Prasarak Mandals Eknath B Madhvi Senior College of Arts Science and Commerce , City: Thane (MU-0607)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "Shri Shankar Narayan Education Trusts Shankar Narayan College of Arts and Commerce , City: Thane (MU-0462)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Financial Market)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Shri Swami Vivekanand Shikshan Sansthas Arts and Commerce College , City: Raigad (MU-0207)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "Shrimad Rajchandra Aatma Tatva Research Center's, Shree Raj College, Ghotawade , City: MUMBAI (MU-1246)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "Shrimati Indira Mahadev Behere College of Arts Shriman Chandulal Sheth College of Commerce and Shrimati Shobhanatai Chandulal Sheth College of Science , City: Ratnagiri (MU-0483)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Shriram Education Society Anand Rao Pawar Arts Commerce and Science Mahavidyalay , City: Ratnagiri (MU-1081)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "Shurparaka Educational and Medical Trust College of Arts and Commerce , City: Thane (MU-0625)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Siddharth College of Arts Science and Commerce , City: Mumbai (MU-0209)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Science"
+    ],
+    "Smt Chandibai H Mansukhani College , City: Thane (MU-0217)": [
+        "Bachelor of Arts",
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Financial Management)",
+        "Bachelor of Commerce (Financial Market)",
+        "Bachelor of Commerce (Investment Management)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science",
+        "Bachelor of Science (Biotechnology)",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Sonopant Dandekar Arts V S Apte Commerce and M H Mehta Science College , City: Thane (MU-0225)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Financial Market)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science",
+        "Bachelor of Science (Biotechnology)",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Sonubhau Basawant College of Arts and Commerce , City: Thane (MU-0226)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)"
+    ],
+    "Sou Shailaja Shinde College of Arts Commerce and Science , City: Ratanagiri (MU-0204)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "Sree Narayan Guru College of Commerce , City: Mumbai (MU-0228)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Commerce (Transport Management)",
+        "Bachelor of Science (Data Science)"
+    ],
+    "St Andrews College of Arts Science and Commerce , City: Mumbai (MU-0229)": [
+        "Bachelor of Arts",
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Science (Hospitality Studies)"
+    ],
+    "St John College of Humanities and Sciences , City: Palghar (MU-1055)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)",
+        "Bachelor of Science (Hospitality Studies)"
+    ],
+    "St Josephs Senior College of Arts and Commerce , City: Thane (MU-0936)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "St Wilfreds College of Arts Science Commerce , City: Navi Mumbai (MU-1033)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "St. Mary Arts Commerce and Science Senior college, Mumbra , City: Thane (MU-1191)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "St. Peter Degree College, Dewanman , City: Mumbai (MU-1183)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "Subhavati Educational Society Cambridge Degree College, Umroli , City: MUMBAI (MU-1241)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "Sudhagad Education Societys Shikshan Maharshi Dadasaheb Limaye College , City: Navi Mumbai (MU-0725)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Sundarrao More Senior College of Arts Commerce and Science , City: Raigad (MU-0502)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "Tale Vibhag Shikshan Prasarak Mandals D G Tatkare Arts and Commerce College , City: Raigad (MU-0558)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "Tatkare Charitable Trust DR Shree Nanasaheb Dharmadhikari Arts Science and Commerce , City: Raigad (MU-1060)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "Thakur Educational Trusts Thakur Ramnarayan College of Arts and Commerce , City: Mumbai (MU-1073)": [
+        "Bachelor of Arts",
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Thane Zilla Agri Shikshan Prasarak Mandals Pragati College of Arts and Commerce , City: Thane (MU-0493)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "The Education Societys P D Kharkhanis College of Arts and Commerce , City: Thane (MU-0268)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "The Janseva Shikshan Mandals Shantarambhau Gholap Arts Science And Gotirambhau Pawar Commerce College Shivle , City: Thane (MU-0545)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "The Konkan Muslim Education Societys G M Momin Womens College , City: Thane (MU-0291)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science",
+        "Bachelor of Science (Biotechnology)"
+    ],
+    "Tukaram Baburao Kadam College of Arts and Science , City: Ratnagiri (MU-0730)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Tulsi Shikshan Prasarak Mandal , City: Thane (MU-1179)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "Tulsi Shikshan Prasarak Mandal Bhiwandi Women College of Arts and Commerce , City: Thane (MU-1090)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "Tulsi Shikshan Prasarak Mansals Adarsh Night College of Arts Commerce and Science , City: Mumbai (MU-1131)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "Tulsi Shikshan Prasark Mandals Ujwal Night College of Arts Commerce and Science , City: Thane (MU-1120)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "Utkarsha College of Arts Commerce and Science , City: Thane (MU-0953)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "VARTAK NAGAR SHIKSHAN MANDALS ARTS SCIENCE AND COMMERCE DEGREE COLLEGE , City: Thane (MU-1228)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "Vidya Mandir Mandals Matoshree Sumati Chintamani Tipnis College of Arts and Commerce , City: Raigad (MU-0884)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)"
+    ],
+    "Vidya Prasarak Mandal Arts Commerce and science collge , City: Thane (MU-1185)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "Vidya Prasarak Mandals Arts Commerce and Science College , City: Thane (MU-0583)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science"
+    ],
+    "Vidya Prasarak Mandals Arts Science and Commerce College , City: Mumbai (MU-0594)": [
+        "Bachelor of Arts",
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Vidya Prasarak Sansthas Devram Laxman Bhoir Degree College of Arts Commerce and Science Balkum Thane W 400608 Thane , City: Thane (MU-1203)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "Vidya Utkarsh Mandal Sanchalit Vidya Utkarsh Mandalache Arts Science and Commerce College , City: Navi Mumbai (MU-1148)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "Vidya Vikas Education Society's Vikas College of Arts Science & Commerce , City: Mumbai (MU-0562)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science",
+        "Bachelor of Science (Biotechnology)",
+        "Bachelor of Science (Computer Science)",
+        "Bachelor of Vocational - Media Production",
+        "Bachelor of Vocational (Medical Laboratory Technology )"
+    ],
+    "Vidya Vinayen Shobhate Karnala Sports Academys Barns College of Arts Science and Commerce , City: Raigad (MU-0833)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Vijayalakshmi Vishwanath Dalvie College Talere , City: Sindhudurg (MU-0983)": [
+        "Bachelor of Arts",
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Vishnu Waman Thakur Charitable Trusts Viva College of Arts Science and Commerce , City: Thane (MU-0548)": [
+        "Bachelor of Arts",
+        "Bachelor of Arts (Culinary Arts)",
+        "Bachelor of Arts (Film, Television and New Media Production)",
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Financial Management)",
+        "Bachelor of Commerce (Financial Market)",
+        "Bachelor of Commerce (Investment Management)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science",
+        "Bachelor of Science (Biotechnology)",
+        "Bachelor of Science (Computer Science)",
+        "Bachelor of Science (Data Science)",
+        "Bachelor of Science (Hospitality Studies)"
+    ],
+    "Wada Nirmiti Education Society Saraswati Night Degree College , City: Palghar (MU-1018)": [
+        "Bachelor of Arts"
+    ],
+    "Y and M ANJUMAN KHAIRULISLAM TRUST - Y AND M COLLEGE OF ARTS COMMERCE AND SCIENCE, OSHIWARA , City: Mumbai (MU-1168)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "Y and M Anjuman Khairul Islam Trust's Y and M A K I s Women's College of Arts Science and Commerce, thane , City: Mumbai (MU-1244)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "Yashwantrao Chavan College of Arts Commerce and Science , City: Navi Mumbai (MU-0873)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science (Computer Science)",
+        "Bachelor of Science (Hospitality Studies)"
+    ],
+    "Yuvak Vikas Mandal Bhalavals Arts Commerce and Science College , City: Rajapur (MU-0272)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce"
+    ],
+    "Zagdu singh chatritable trusts Thakur Specialized degree collage , City: Kandivali (W) (MU-1235)": [
+        "Bachelor of Arts",
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "Sanskar Sarjan Education Societys Dhirajlal Talakchand Sankalchand Shah College of Law , City: Mumbai (MU-1077)": [
+        "Bachelor of Arts - Diploma in Foundation of Yoga"
+    ],
+    "Kandivli Education Societys Bhanumati Kishandas Shroff College of Arts and Maganlal Hargovindas Shroff College of Commerce , City: Mumbai (MU-0101)": [
+        "Bachelor of Arts - Film, Television and New Media Production (Autonomous)",
+        "Bachelor of Arts - Multimedia and Mass Communication (Autonomous)",
+        "Bachelor of Arts (Autonomous)",
+        "Bachelor of Business Administration (Autonomous) (Digital Marketing)",
+        "Bachelor of Business Administration (Honours)(Autonomous) (Digital Business)",
+        "Bachelor of Commerce - (Business Administration) (Autonomous)",
+        "Bachelor of Commerce (Autonomous)",
+        "Bachelor of Commerce (Autonomous) (Certified Management Accounting)",
+        "Bachelor of Commerce (Autonomous) (International Accounting)",
+        "Bachelor of Commerce (Autonomous) (Investment Management)",
+        "Bachelor of Commerce (Autonomous) (Retail Management)",
+        "Bachelor of Commerce (Banking &amp;Isurance) (Autonomous)",
+        "Bachelor of Commerce (Financial Management) (Autonomous)",
+        "Bachelor of Commerce(Accounting and Finance)(Autonomous)",
+        "Bachelor of Computer Application (Autonomous)",
+        "Bachelor of Management Studies (E.M.E.) (Autonomous)",
+        "Bachelor of Science (Data Science) (Autonomous)"
+    ],
+    "Thakur Educational Trusts Thakur College of Science and Commerce , City: Mumbai (MU-0490)": [
+        "Bachelor of Arts - Film, Television and New Media Production (Autonomous)",
+        "Bachelor of Arts - Multimedia and Mass Communication (Autonomous)",
+        "Bachelor of Commerce (Autonomous)",
+        "Bachelor of Commerce (Autonomous) (Entrepreneurship)",
+        "Bachelor of Commerce (Autonomous) (International Accounting)",
+        "Bachelor of Commerce (Autonomous) (International Accounting)",
+        "Bachelor of Commerce (Autonomous) (Investment Management)",
+        "Bachelor of Commerce (Autonomous) (Service Industry Management)",
+        "Bachelor of Commerce (Banking &amp;Isurance) (Autonomous)",
+        "Bachelor of Commerce (Financial Management) (Autonomous)",
+        "Bachelor of Commerce (Honours)(Autonomous)",
+        "Bachelor of Commerce(Accounting and Finance)(Autonomous)",
+        "Bachelor of Management Studies (E.M.E.) (Autonomous)",
+        "Bachelor of Science (Autonomous)",
+        "Bachelor of Science (Autonomous) (Actuarial Science)",
+        "Bachelor of Science (Aviation) (Autonomous)",
+        "Bachelor of Science (Biotechnology) (Autonomous)",
+        "Bachelor of Science (Data Science) (Autonomous)"
+    ],
+    "Bunts Sanghas S M Shetty College of Science Commerce and Management Studies , City: Mumbai (MU-0863)": [
+        "Bachelor of Arts - Multimedia and Mass Communication (Autonomous)",
+        "Bachelor of Commerce (Autonomous)",
+        "Bachelor of Commerce (Banking &amp;Isurance) (Autonomous)",
+        "Bachelor of Commerce(Accounting and Finance)(Autonomous)",
+        "Bachelor of Science (Data Science) (Autonomous)"
+    ],
+    "Chetanas Hazarimal Somani College of Commerce and Economics Smt Kusumtai Chaudhari College of Arts , City: Mumbai (MU-0032)": [
+        "Bachelor of Arts - Multimedia and Mass Communication (Autonomous)",
+        "Bachelor of Arts (Autonomous)",
+        "Bachelor of Commerce (Autonomous)",
+        "Bachelor of Commerce(Accounting and Finance)(Autonomous)",
+        "Bachelor of Management Studies (E.M.E.) (Autonomous)"
+    ],
+    "D E Societys Kirti M Doongursee College of Arts Science and Commerce , City: Mumbai (MU-0104)": [
+        "Bachelor of Arts - Multimedia and Mass Communication (Autonomous)",
+        "Bachelor of Arts (Autonomous)",
+        "Bachelor of Commerce (Autonomous)",
+        "Bachelor of Commerce(Accounting and Finance)(Autonomous)",
+        "Bachelor of Management Studies (E.M.E.) (Autonomous)",
+        "Bachelor of Science (Autonomous)",
+        "Bachelor of Science (Biotechnology) (Autonomous)"
+    ],
+    "D S P Mandals K V Pendharkar College of Arts Science and Commerce , City: Thane (MU-0262)": [
+        "Bachelor of Arts - Multimedia and Mass Communication (Autonomous)",
+        "Bachelor of Arts (Autonomous)",
+        "Bachelor of Commerce (Autonomous)",
+        "Bachelor of Commerce (Banking &amp;Isurance) (Autonomous)",
+        "Bachelor of Commerce(Accounting and Finance)(Autonomous)",
+        "Bachelor of Management Studies (E.M.E.) (Autonomous)",
+        "Bachelor of Science (Autonomous)",
+        "Bachelor of Science (Biotechnology) (Autonomous)"
+    ],
+    "Guru Nanak Khalsa College , City: Mumbai (MU-0057)": [
+        "Bachelor of Arts - Multimedia and Mass Communication (Autonomous)",
+        "Bachelor of Arts (Autonomous)",
+        "Bachelor of Commerce (Autonomous)",
+        "Bachelor of Commerce (Banking &amp;Isurance) (Autonomous)",
+        "Bachelor of Commerce (Financial Management) (Autonomous)",
+        "Bachelor of Commerce(Accounting and Finance)(Autonomous)",
+        "Bachelor of Management Studies (E.M.E.) (Autonomous)",
+        "Bachelor of Science (Autonomous)",
+        "Bachelor of Science (Biotechnology) (Autonomous)"
+    ],
+    "Jai Hind College , City: Mumbai (MU-0088)": [
+        "Bachelor of Arts - Multimedia and Mass Communication (Autonomous)",
+        "Bachelor of Arts (Autonomous)",
+        "Bachelor of Business Administration (Honours)(Autonomous) (Industry Integrated)",
+        "Bachelor of Commerce (Autonomous)",
+        "Bachelor of Commerce (Banking &amp;Isurance) (Autonomous)",
+        "Bachelor of Commerce (Financial Management) (Autonomous)",
+        "Bachelor of Commerce(Accounting and Finance)(Autonomous)",
+        "Bachelor of Management Studies (E.M.E.) (Autonomous)",
+        "Bachelor of Science (Autonomous)",
+        "Bachelor of Science (Biotechnology) (Autonomous)",
+        "Bachelor of Vocational (Autonomous) (Travel and Tourism Management)"
+    ],
+    "K P B Hinduja College of Commerce , City: Mumbai (MU-0098)": [
+        "Bachelor of Arts - Multimedia and Mass Communication (Autonomous)",
+        "Bachelor of Business Administration (Autonomous) (Digital Marketing)",
+        "Bachelor of Business Administration (Honours)(Autonomous) (Digital Business)",
+        "Bachelor of Commerce (Autonomous)",
+        "Bachelor of Commerce (Autonomous) (Investment Management)",
+        "Bachelor of Commerce (Banking &amp;Isurance) (Autonomous)",
+        "Bachelor of Commerce (Financial Management) (Autonomous)",
+        "Bachelor of Commerce(Accounting and Finance)(Autonomous)",
+        "Bachelor of Management Studies (E.M.E.) (Autonomous)"
+    ],
+    "Keraleeya Samajam Dombivlis Model College , City: Thane (MU-0102)": [
+        "Bachelor of Arts - Multimedia and Mass Communication (Autonomous)",
+        "Bachelor of Commerce (Autonomous)",
+        "Bachelor of Commerce (Banking &amp;Isurance) (Autonomous)",
+        "Bachelor of Commerce (Financial Management) (Autonomous)",
+        "Bachelor of Commerce(Accounting and Finance)(Autonomous)",
+        "Bachelor of Management Studies (E.M.E.) (Autonomous)",
+        "Bachelor of Science (Autonomous)"
+    ],
+    "M L Dahanukar College of Commerce , City: Mumbai (MU-0114)": [
+        "Bachelor of Arts - Multimedia and Mass Communication (Autonomous)",
+        "Bachelor of Commerce (Autonomous)",
+        "Bachelor of Commerce (Banking &amp;Isurance) (Autonomous)",
+        "Bachelor of Commerce (Financial Market) (Autonomous)",
+        "Bachelor of Commerce (Management Studies)(Autonomous)",
+        "Bachelor of Commerce(Accounting and Finance)(Autonomous)"
+    ],
+    "M M College of Arts N M Institute of Science and Haji Rashid Jaffer College of Commerce Bhavans College , City: Mumbai (MU-0115)": [
+        "Bachelor of Arts - Multimedia and Mass Communication (Autonomous)",
+        "Bachelor of Arts (Autonomous)",
+        "Bachelor of Commerce (Autonomous)",
+        "Bachelor of Commerce (Autonomous) (Retail Management)",
+        "Bachelor of Commerce(Accounting and Finance)(Autonomous)",
+        "Bachelor of Management Studies (E.M.E.) (Autonomous)",
+        "Bachelor of Science (Autonomous)",
+        "Bachelor of Science (Autonomous) (Medical Imaging Technology)",
+        "Bachelor of Science (Autonomous) (Medical Laboratory Technology)",
+        "Bachelor of Science (Autonomous) (Psychology)",
+        "Bachelor of Science (Biotechnology) (Autonomous)"
+    ],
+    "Mahatma Education Societys Pillais College of Arts Commerce and Science , City: Navi Mumbai (MU-0719)": [
+        "Bachelor of Arts - Multimedia and Mass Communication (Autonomous)",
+        "Bachelor of Business Administration (Autonomous) (Digital Marketing)",
+        "Bachelor of Commerce - (Business Administration) (Autonomous)",
+        "Bachelor of Commerce (Autonomous)",
+        "Bachelor of Commerce (Autonomous) (Financial Markets)",
+        "Bachelor of Commerce(Accounting and Finance)(Autonomous)",
+        "Bachelor of Computer Application (Autonomous)",
+        "Bachelor of Management Studies (E.M.E.) (Autonomous)",
+        "Bachelor of Science (Autonomous)",
+        "Bachelor of Science (Autonomous) (Economics)",
+        "Bachelor of Science (Autonomous) (Psychology)",
+        "Bachelor of Science (Biotechnology) (Autonomous)",
+        "Bachelor of Science (Honours) (Autonomous) (Interior Design)"
+    ],
+    "Mithibai College of Arts Chauhan Institute of Science and A J College of Commerce and Economics , City: Mumbai (MU-0132)": [
+        "Bachelor of Arts - Multimedia and Mass Communication (Autonomous)",
+        "Bachelor of Arts (Autonomous)",
+        "Bachelor of Commerce (Autonomous)",
+        "Bachelor of Commerce (Autonomous) (Management and Finance)",
+        "Bachelor of Commerce (Banking &amp;Isurance) (Autonomous)",
+        "Bachelor of Commerce (Financial Management) (Autonomous)",
+        "Bachelor of Commerce(Accounting and Finance)(Autonomous)",
+        "Bachelor of Management Studies (E.M.E.) (Autonomous)",
+        "Bachelor of Science (Autonomous)",
+        "Bachelor of Science (Biotechnology) (Autonomous)"
+    ],
+    "Nagindas Khandwala College of Commerce and Arts , City: Mumbai (MU-0139)": [
+        "Bachelor of Arts - Multimedia and Mass Communication (Autonomous)",
+        "Bachelor of Arts (Autonomous)",
+        "Bachelor of Arts (Honours) - Apparel Design and Construction (Autonomous)",
+        "Bachelor of Business Administration (Honours)(Autonomous) (Business Administration)",
+        "Bachelor of Business Administration (Honours)(Autonomous) (Entrepreneurship)",
+        "Bachelor of Business Administration (Honours)(Autonomous) (Marketing Management)",
+        "Bachelor of Business Administration (Honours)(Autonomous) (Professional Accountancy And Financial Management)",
+        "Bachelor of Business Administration (Honours)(Autonomous) (Sports Management)",
+        "Bachelor of Business Administration (Honours)(Autonomous) (Tourism and Travel Management)",
+        "Bachelor of Commerce (Autonomous)",
+        "Bachelor of Commerce (Autonomous) (Financial Markets)",
+        "Bachelor of Commerce (Autonomous) (International Accounting)",
+        "Bachelor of Commerce (Banking &amp;Isurance) (Autonomous)",
+        "Bachelor of Commerce (Financial Management) (Autonomous)",
+        "Bachelor of Commerce(Accounting and Finance)(Autonomous)",
+        "Bachelor of Management Studies (E.M.E.) (Autonomous)",
+        "Bachelor of Science (Autonomous)",
+        "Bachelor of Science (Autonomous) (Artificial Intelligence and Machine Learning)",
+        "Bachelor of Science (Autonomous) (Cloud Technology and Information Security)",
+        "Bachelor of Science (Autonomous) (Psychology)",
+        "Bachelor of Science (Honours) (Autonomous) (Integrative Nutrition &amp;Dietetics)",
+        "Bachelor of Science (Honours) (Autonomous) (Interior Design)"
+    ],
+    "Parle Tilak Vidyalaya Associations Sathaye College , City: Mumbai (MU-0155)": [
+        "Bachelor of Arts - Multimedia and Mass Communication (Autonomous)",
+        "Bachelor of Arts (Autonomous)",
+        "Bachelor of Commerce (Autonomous)",
+        "Bachelor of Commerce(Accounting and Finance)(Autonomous)",
+        "Bachelor of Management Studies (E.M.E.) (Autonomous)",
+        "Bachelor of Management Studies (Sports Management) (Autonomous)",
+        "Bachelor of Science (Autonomous)"
+    ],
+    "Ramnarain Ruia College , City: Mumbai (MU-0170)": [
+        "Bachelor of Arts - Multimedia and Mass Communication (Autonomous)",
+        "Bachelor of Arts (Autonomous)",
+        "Bachelor of Science (Autonomous)",
+        "Bachelor of Science (Biotechnology) (Autonomous)",
+        "Bachelor of Vocational (Autonomous) (Tourism and Travel Management)"
+    ],
+    "Ramniranjan Jhunjhunwala College , City: Mumbai (MU-0171)": [
+        "Bachelor of Arts - Multimedia and Mass Communication (Autonomous)",
+        "Bachelor of Arts (Autonomous)",
+        "Bachelor of Business Administration (Autonomous) (Business Analytics and Management)",
+        "Bachelor of Commerce (Autonomous)",
+        "Bachelor of Commerce (Banking &amp;Isurance) (Autonomous)",
+        "Bachelor of Commerce(Accounting and Finance)(Autonomous)",
+        "Bachelor of Management Studies (E.M.E.) (Autonomous)",
+        "Bachelor of Science (Autonomous)",
+        "Bachelor of Science (Autonomous) (Animation and VFX)",
+        "Bachelor of Science (Autonomous) (Interior Design)",
+        "Bachelor of Science (Autonomous) (Medical Imaging Technology)",
+        "Bachelor of Science (Autonomous) (Medical Laboratory Technology)",
+        "Bachelor of Science (Biotechnology) (Autonomous)",
+        "Bachelor of Vocational (Autonomous) (Financial Markets and Sevices)",
+        "Bachelor of Vocational (Autonomous) (Real Estate Management)"
+    ],
+    "S S and L S Patkar College of Arts and Science and V P Varde College of Commerce and Economics , City: Mumbai (MU-0156)": [
+        "Bachelor of Arts - Multimedia and Mass Communication (Autonomous)",
+        "Bachelor of Arts - Visual Arts (Autonomous)",
+        "Bachelor of Arts (Autonomous)",
+        "Bachelor of Commerce (Autonomous)",
+        "Bachelor of Commerce (Autonomous) (Business Process Management)",
+        "Bachelor of Commerce (Banking &amp;Isurance) (Autonomous)",
+        "Bachelor of Commerce (Honours)(Autonomous) (Finance and Management Accounting)",
+        "Bachelor of Commerce(Accounting and Finance)(Autonomous)",
+        "Bachelor of Management Studies (E.M.E.) (Autonomous)",
+        "Bachelor of Management Studies (Sports Management) (Autonomous)",
+        "Bachelor of Science (Autonomous)",
+        "Bachelor of Science (Autonomous) (Actuarial Science &amp;Quantitative Finance)",
+        "Bachelor of Science (Autonomous) (Hospitality and Catering)",
+        "Bachelor of Science (Autonomous) (Hospitality and Catering) (Sattalite centre )",
+        "Bachelor of Science (Aviation) (Autonomous)",
+        "Bachelor of Science (Biotechnology) (Autonomous)",
+        "Bachelor of Science (Data Science and Business Analytics) (Autonomous)"
+    ],
+    "Sophia College for Women , City: Mumbai (MU-0227)": [
+        "Bachelor of Arts - Multimedia and Mass Communication (Autonomous)",
+        "Bachelor of Arts (Autonomous)",
+        "Bachelor of Science (Autonomous)"
+    ],
+    "South Indian Education Societys College of Arts Science and Commerce , City: Mumbai (MU-0183)": [
+        "Bachelor of Arts - Multimedia and Mass Communication (Autonomous)",
+        "Bachelor of Arts (Autonomous)",
+        "Bachelor of Commerce (Autonomous)",
+        "Bachelor of Management Studies (Capital Market) (Autonomous)",
+        "Bachelor of Management Studies (E.M.E.) (Autonomous)",
+        "Bachelor of Science (Autonomous)",
+        "Bachelor of Science (Autonomous) (Environmental Science)",
+        "Bachelor of Science (Biotechnology) (Autonomous)",
+        "Bachelor of Science (Data Science) (Autonomous)"
+    ],
+    "South Indian Education Societys College of Arts Science and Commerce Navi Mumbai , City: Navi Mumbai (MU-0710)": [
+        "Bachelor of Arts - Multimedia and Mass Communication (Autonomous)",
+        "Bachelor of Commerce (Autonomous)",
+        "Bachelor of Commerce (Autonomous) (Financial Markets)",
+        "Bachelor of Commerce (Banking &amp;Isurance) (Autonomous)",
+        "Bachelor of Commerce (Financial Management) (Autonomous)",
+        "Bachelor of Commerce(Accounting and Finance)(Autonomous)",
+        "Bachelor of Management Studies (E.M.E.) (Autonomous)",
+        "Bachelor of Science (Autonomous) (Environmental Science)",
+        "Bachelor of Science (Autonomous) (Packaging Technology)",
+        "Bachelor of Science (Data Science) (Autonomous)"
+    ],
+    "St Xaviers College , City: Mumbai (MU-0231)": [
+        "Bachelor of Arts - Multimedia and Mass Communication (Autonomous)",
+        "Bachelor of Arts (Autonomous)",
+        "Bachelor of Commerce (Autonomous)",
+        "Bachelor of Commerce(Accounting and Finance)(Autonomous)",
+        "Bachelor of Management Studies (E.M.E.) (Autonomous)",
+        "Bachelor of Science (Autonomous)"
+    ],
+    "The Guru Nanak Vidyak Societys Arts Science and Commerce College , City: Mumbai (MU-0075)": [
+        "Bachelor of Arts - Multimedia and Mass Communication (Autonomous)",
+        "Bachelor of Arts (Autonomous)",
+        "Bachelor of Commerce (Autonomous)",
+        "Bachelor of Commerce (Banking &amp;Isurance) (Autonomous)",
+        "Bachelor of Commerce (Financial Management) (Autonomous)",
+        "Bachelor of Commerce (Management Studies)(Autonomous)",
+        "Bachelor of Commerce(Accounting and Finance)(Autonomous)",
+        "Bachelor of Science",
+        "Bachelor of Science (Autonomous)"
+    ],
+    "The Kelkar Education Trusts Vinayak Ganesh Vaze College of Arts Science and Commerce , City: Mumbai (MU-0288)": [
+        "Bachelor of Arts - Multimedia and Mass Communication (Autonomous)",
+        "Bachelor of Arts (Autonomous)",
+        "Bachelor of Commerce - (Business Administration) (Autonomous)",
+        "Bachelor of Commerce (Autonomous)",
+        "Bachelor of Commerce (Banking &amp;Isurance) (Autonomous)",
+        "Bachelor of Commerce(Accounting and Finance)(Autonomous)",
+        "Bachelor of Management Studies (E.M.E.) (Autonomous)",
+        "Bachelor of Science (Autonomous)",
+        "Bachelor of Science (Biotechnology) (Autonomous)",
+        "Bachelor of Vocational (Autonomous) ( Tourism and Hospitality)"
+    ],
+    "V P Ms K G Joshi College of Arts and N G Bedekar College of Commerce , City: Thane (MU-0354)": [
+        "Bachelor of Arts - Multimedia and Mass Communication (Autonomous)",
+        "Bachelor of Arts (Autonomous)",
+        "Bachelor of Business Administration (Autonomous) (Logistics)",
+        "Bachelor of Commerce (Autonomous)",
+        "Bachelor of Commerce (Autonomous) ( Digital Marketing and Artificial Intelligence)",
+        "Bachelor of Commerce (Autonomous) (Financial Markets)",
+        "Bachelor of Commerce (Autonomous) (International Accounting)",
+        "Bachelor of Commerce (Autonomous) (International Accounting)",
+        "Bachelor of Commerce (Banking &amp;Isurance) (Autonomous)",
+        "Bachelor of Commerce (Financial Management) (Autonomous)",
+        "Bachelor of Commerce (Management Studies)(Autonomous)",
+        "Bachelor of Commerce(Accounting and Finance)(Autonomous)",
+        "Bachelor of Management Studies (E.M.E.) (Autonomous)",
+        "Bachelor of Vocational (Autonomous) (Sales and Marketing Management)"
+    ],
+    "Vivek Education Societys Vivek College of Commerce , City: Mumbai (MU-0365)": [
+        "Bachelor of Arts - Multimedia and Mass Communication (Autonomous)",
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Autonomous)",
+        "Bachelor of Commerce (Autonomous) (Financial Markets)",
+        "Bachelor of Commerce (Banking &amp;Isurance) (Autonomous)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Financial Market)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Commerce(Accounting and Finance)(Autonomous)"
+    ],
+    "Vivekanand Education Societys College of Arts Science and Commerce , City: Mumbai (MU-0345)": [
+        "Bachelor of Arts - Multimedia and Mass Communication (Autonomous)",
+        "Bachelor of Arts (Autonomous)",
+        "Bachelor of Commerce - (Business Administration) (Autonomous)",
+        "Bachelor of Commerce (Autonomous)",
+        "Bachelor of Commerce (Autonomous) (E-Commerce)",
+        "Bachelor of Commerce (Autonomous) (Finance)",
+        "Bachelor of Commerce (Banking &amp;Isurance) (Autonomous)",
+        "Bachelor of Commerce (Financial Management) (Autonomous)",
+        "Bachelor of Commerce(Accounting and Finance)(Autonomous)",
+        "Bachelor of Management Studies (E.M.E.) (Autonomous)",
+        "Bachelor of Science (Autonomous)",
+        "Bachelor of Science (Autonomous) (Artificial Intelligence)",
+        "Bachelor of Science (Autonomous) (Data Science and Data Analytics)",
+        "Bachelor of Science (Biotechnology) (Autonomous)"
+    ],
+    "Wilson College , City: Mumbai (MU-0369)": [
+        "Bachelor of Arts - Multimedia and Mass Communication (Autonomous)",
+        "Bachelor of Arts (Autonomous)",
+        "Bachelor of Commerce (Autonomous)",
+        "Bachelor of Commerce (Autonomous) (Financial Markets)",
+        "Bachelor of Commerce(Accounting and Finance)(Autonomous)",
+        "Bachelor of Management Studies (E.M.E.) (Autonomous)",
+        "Bachelor of Science (Autonomous)",
+        "Bachelor of Vocation - Theatre and Stage Craft (Autonomous)"
+    ],
+    "The College of Social Work , City: Mumbai (MU-0260)": [
+        "Bachelor of Arts - Social Work(Autonomous)"
+    ],
+    "Janardan Bhagat Shikshan Prasarak Sansthas Changu Kana Thakur Arts Commerce and Science College , City: Raigad (MU-0491)": [
+        "Bachelor of Arts (Autonomous)",
+        "Bachelor of Commerce (Autonomous)",
+        "Bachelor of Commerce(Accounting and Finance)(Autonomous)",
+        "Bachelor of Management Studies (E.M.E.) (Autonomous)",
+        "Bachelor of Science (Autonomous)",
+        "Bachelor of Science (Biotechnology) (Autonomous)"
+    ],
+    "K J Somaiya College of Arts and Commerce , City: Mumbai (MU-0091)": [
+        "Bachelor of Arts (Autonomous)",
+        "Bachelor of Commerce (Autonomous)"
+    ],
+    "NyayadhishTatyasaheb Athalye Arts Vedmurti S R Sapre Commerce and Vedmurti Dadasaheb Pitre Science College , City: Ratnagiri (MU-0148)": [
+        "Bachelor of Arts (Autonomous)",
+        "Bachelor of Commerce (Autonomous)",
+        "Bachelor of Science (Autonomous)",
+        "Bachelor of Vocational (Autonomous) ( Banking and Financial Service)",
+        "Bachelor of Vocational (Autonomous) (Sustainable Agriculture)"
+    ],
+    "R E Societys R P Gogate College of Arts and Science and R V Jogalekar College of Commerce , City: Ratnagiri (MU-0165)": [
+        "Bachelor of Arts (Autonomous)",
+        "Bachelor of Commerce (Autonomous)",
+        "Bachelor of Commerce(Accounting and Finance)(Autonomous)",
+        "Bachelor of Management Studies (E.M.E.) (Autonomous)",
+        "Bachelor of Science (Autonomous)",
+        "Bachelor of Science (Biotechnology) (Autonomous)"
+    ],
+    "Shri Pancham Khemraj Mahavidyalaya , City: Sindhudurg (MU-0187)": [
+        "Bachelor of Arts (Autonomous)",
+        "Bachelor of Commerce (Autonomous)",
+        "Bachelor of Commerce (Banking &amp;Isurance) (Autonomous)",
+        "Bachelor of Science (Autonomous)"
+    ],
+    "The Rayat Shikshan Sanstha S Karmavir Bhaurao Patil College , City: Navi Mumbai (MU-0301)": [
+        "Bachelor of Arts (Autonomous)",
+        "Bachelor of Business Administration (Autonomous) (Capital Market)",
+        "Bachelor of Business Administration (Autonomous) (Logistics &amp;Supply Chain Management)",
+        "Bachelor of Commerce (Autonomous)",
+        "Bachelor of Commerce (Banking &amp;Isurance) (Autonomous)",
+        "Bachelor of Commerce(Accounting and Finance)(Autonomous)",
+        "Bachelor of Management Studies (E.M.E.) (Autonomous)",
+        "Bachelor of Science (Autonomous)",
+        "Bachelor of Science (Biotechnology) (Autonomous)",
+        "Bachelor of Vocational (Autonomous) (Food Technology)"
+    ],
+    "Atharva College of Hotel Management and Catering Technology , City: Mumbai (MU-0851)": [
+        "Bachelor of Arts (Culinary Arts)",
+        "Bachelor of Arts (Film, Television and New Media Production)",
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Science (Data Science)",
+        "Bachelor of Science (Hospitality Studies)"
+    ],
+    "Bunts Sanghas Ramanath Payyade College of Hospitality Management Studies , City: Mumbai (MU-0950)": [
+        "Bachelor of Arts (Culinary Arts)",
+        "Bachelor of Science (Hospitality Studies)"
+    ],
+    "ITM Institute of Hotel Management , City: Navi Mumbai (MU-0783)": [
+        "Bachelor of Arts (Culinary Arts)",
+        "Bachelor of Science (Hospitality Studies)"
+    ],
+    "R P Educational Trusts R P Institute of Hospitality and Management , City: Palghar (MU-1108)": [
+        "Bachelor of Arts (Culinary Arts)",
+        "Bachelor of Science (Computer Science)",
+        "Bachelor of Science (Hospitality Studies)"
+    ],
+    "Sheila Raheja Institute of Hotel Management , City: Mumbai (MU-0172)": [
+        "Bachelor of Arts (Culinary Arts)",
+        "Bachelor of Science (Hospitality Studies)"
+    ],
+    "Training Ship Rahaman, Nhava , City: Mumbai (MU-0775)": [
+        "Bachelor of Arts (Culinary Arts)",
+        "Bachelor of Science (Maritime Hopitality Studies)",
+        "Bachelor of Science (Nautical Science)"
+    ],
+    "Zagdu Singh Charitable Trusts Thakur Shyamnarayan Degree College of Science , City: Mumbai (MU-1019)": [
+        "Bachelor of Arts (Culinary Arts)",
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Science",
+        "Bachelor of Science (Aeronautics) (Avionics)",
+        "Bachelor of Science (Aeronautics) (Mechanical)",
+        "Bachelor of Science (Computer Science)",
+        "Bachelor of Science (Data Science)",
+        "Bachelor of Science (Hospitality Studies)"
+    ],
+    "Deviprasad Goenka Management College of Media Studies , City: Mumbai (MU-0488)": [
+        "Bachelor of Arts (Film, Television and New Media Production)",
+        "Bachelor of Arts (Multimedia and Mass Communication)"
+    ],
+    "Ritambara Vishwa Vidyapeeths Malini Kishor Sanghavi College of Commerce and Economics , City: Mumbai (MU-0454)": [
+        "Bachelor of Arts (Film, Television and New Media Production)",
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Financial Market)",
+        "Bachelor of Commerce (Investment Management)"
+    ],
+    "Usha Pravin Gandhi College of Arts Science and Commerce , City: Mumbai (MU-0598)": [
+        "Bachelor of Arts (Film, Television and New Media Production)",
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Achievers College of Commerce and Management Night , City: Thane (MU-0434)": [
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Financial Management)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science (Computer Science)",
+        "Bachelor of Vocational ( Management and Entrepreneurship Development)",
+        "Bachelor of Vocational(Tourism and Hospitality Management)"
+    ],
+    "Adarsh Shikshan Mandals Konark Ideal College of Science and Commerce , City: Thane (MU-0265)": [
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Akbar Peerbhoy College of Commerce and Economics , City: Mumbai (MU-0003)": [
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Science (Data Science)"
+    ],
+    "Asara Samjik Sanstha Kalyans Arts Commerce and Science Night College , City: Thane (MU-1001)": [
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science"
+    ],
+    "Bunts Sangha Mumbai Anna Leela College of Commerce and Economics Shobha Jayaram Shetty College for BMS , City: Mumbai (MU-0869)": [
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Chandrabhan Sharma College of Arts Science and Commerce , City: Mumbai (MU-0864)": [
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Financial Market)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science (Data Science)"
+    ],
+    "Children Welfare Centres Claras College of Commerce , City: Mumbai (MU-0516)": [
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Jnan Vikas Mandals College of Arts Science and Commerce , City: Navi Mumbai (MU-0723)": [
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "K L E Societys Science and Commerce College , City: Navi Mumbai (MU-0439)": [
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science"
+    ],
+    "Kapol Vidyanidhi College of Hotel Management , City: Mumbai (MU-0896)": [
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science (Computer Science)",
+        "Bachelor of Science (Hospitality Studies)"
+    ],
+    "Khar Education Societys Degree College of Commerce and Economics , City: Mumbai (MU-0638)": [
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Lala Lajpatrai College of Commerce and Economics , City: Mumbai (MU-0112)": [
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Financial Management)"
+    ],
+    "M S P Mandals G R Patil College of Arts Science Commerce and B M S , City: Thane (MU-0727)": [
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)",
+        "Bachelor of Science (Hospitality Studies)"
+    ],
+    "N K E S College of Arts Commerce and Science , City: Mumbai (MU-1062)": [
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)"
+    ],
+    "Nava Samaj Mandal Degree College , City: Mumbai (MU-0476)": [
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)"
+    ],
+    "Nirmala Memorial Foundation College of Commerce and Science , City: Mumbai (MU-0631)": [
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Prahladrai Dalmia Lions College of Commerce and Economics , City: Mumbai (MU-0151)": [
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Financial Market)",
+        "Bachelor of Commerce (Investment Management)"
+    ],
+    "Priti Academy Degree College , City: Thane (MU-0026)": [
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Arts(DEMO)",
+        "Bachelor of Commerce"
+    ],
+    "Royal College of Science and Commerce , City: Thane (MU-0923)": [
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Sanpada College of Commerce and Technology , City: Navi Mumbai (MU-0604)": [
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Seth L U Jhaveri College of Arts and Sir M V College of Science and Commerce , City: Mumbai (MU-0199)": [
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Science (Biotechnology)",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Shree L R Tiwari Degree College of Arts Commerce and Science , City: Thane (MU-1064)": [
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Science (Aviation)",
+        "Bachelor of Science (Computer Science)",
+        "Bachelor of Science (Data Science)",
+        "Bachelor of Science (Hospitality Studies)"
+    ],
+    "Shree Ram Raje College of Hotel and Tourism Management , City: Ratnagiri (MU-0894)": [
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Science (Hospitality Studies)"
+    ],
+    "Shri G P M Degree College of Science and Commerce , City: Mumbai (MU-0384)": [
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Shri L P Raval College of Mass Media and Management Studies , City: Thane (MU-1040)": [
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Science (Hospitality Studies)"
+    ],
+    "Siddharth College of Commerce and Economics , City: Mumbai (MU-0210)": [
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce"
+    ],
+    "Smt Kamaladevi Gauridutt Mittal College of Arts and Commerce , City: Mumbai (MU-0218)": [
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Smt Mithibai Motiram Kundnani College of Commerce and Economics , City: Mumbai (MU-0220)": [
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Financial Market)"
+    ],
+    "Suman Education Societys LN College of Commerce and Science Day College , City: Mumbai (MU-1097)": [
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce"
+    ],
+    "The Bombay Salesian Societys Don Bosco College , City: Mumbai (MU-0898)": [
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science (Hospitality Studies)"
+    ],
+    "The Bombay St Pauls Societys St Paul Institute of Communication Education For Women , City: Mumbai (MU-1082)": [
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "The S I A College of Higher Education , City: Thane (MU-0521)": [
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Tilak Education Societys S K College of science and Commerce , City: Navi Mumbai (MU-0874)": [
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science (Computer Science)",
+        "Bachelor of Science (Data Science)"
+    ],
+    "Tilak Education Societys Tilak College of Arts Science and Commerce , City: Navi Mumbai (MU-0612)": [
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science (Biotechnology)",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Valia Chhaganlal Laljibhai College of Commerce and Valia Lilavantiben Chhaganlal College of Arts , City: Mumbai (MU-0037)": [
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Science (Data Science)"
+    ],
+    "Vidya Vikas Education Trusts Lords Universal College , City: Mumbai (MU-0647)": [
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Vidya Vikas Education Trusts Vidya Vikas College of Arts Science and Commerce , City: Mumbai (MU-0861)": [
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Vidyalankar School of Information Technology , City: Mumbai (MU-0640)": [
+        "Bachelor of Arts (Multimedia and Mass Communication)",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Financial Market)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science (Data Science)"
+    ],
+    "Department of French , City: Kalina (Mumbai) (MU-418)": [
+        "Bachelor of Arts( FRENCH STUDIES )",
+        "Bachelor of Arts(Bachelor of Arts  (FRENCH))"
+    ],
+    "Department of German , City: Kalina (Mumbai) (MU-417)": [
+        "Bachelor of Arts(Bachelor of  Arts (GERMAN))"
+    ],
+    "Anand Vishwa Gurukul Sr Night College of Commerce and Science , City: Thane (MU-0011)": [
+        "Bachelor of Arts(DEMO)",
+        "Bachelor of Commerce"
+    ],
+    "Anjuman I Islams Akbar Peerbhoy College of Education , City: Navi Mumbai (MU-0009)": [
+        "Bachelor of Arts(DEMO)"
+    ],
+    "Anjuman I Islams M H Saboo Siddik College of Engineering , City: Mumbai (MU-0010)": [
+        "Bachelor of Arts(DEMO)"
+    ],
+    "B N Bandodkar College of Science , City: Thane (MU-0012)": [
+        "Bachelor of Arts(DEMO)",
+        "Bachelor of Science (Autonomous)",
+        "Bachelor of Science (Biotechnology) (Autonomous)"
+    ],
+    "Balbharati College of Commerce , City: Mumbai (MU-0014)": [
+        "Bachelor of Arts(DEMO)",
+        "Bachelor of Commerce"
+    ],
+    "Bharati Vidyapeeths College of Engineering , City: Navi Mumbai (MU-0017)": [
+        "Bachelor of Arts(DEMO)"
+    ],
+    "Bharatiya Seva Samaj Sanchalit College of Arts and Commerce , City: Mumbai (MU-0019)": [
+        "Bachelor of Arts(DEMO)"
+    ],
+    "Bombay Teachers Training College , City: Mumbai (MU-0025)": [
+        "Bachelor of Arts(DEMO)"
+    ],
+    "Department of Psychology , City: Kalina (Mumbai) (MU-0316)": [
+        "Bachelor of Arts(DEMO)"
+    ],
+    "Sir JP College Of Education and Research , City: Mumbai (MU-0030)": [
+        "Bachelor of Arts(DEMO)"
+    ],
+    "Tolani College of Commerce , City: Mumbai (MU-0412)": [
+        "Bachelor of Business Administration (Autonomous) (Logistics)",
+        "Bachelor of Commerce (Autonomous)",
+        "Bachelor of Commerce (Autonomous) (Financial Markets)",
+        "Bachelor of Commerce (Banking &amp;Isurance) (Autonomous)",
+        "Bachelor of Commerce(Accounting and Finance)(Autonomous)",
+        "Bachelor of Management Studies (E.M.E.) (Autonomous)"
+    ],
+    "Ramanand Arya s D A V College of Commerce Arts and Science , City: Mumbai (MU-0169)": [
+        "Bachelor of Business Administration (Honours)(Autonomous)",
+        "Bachelor of Business Administration (Honours)(Autonomous) (Marketing Management)",
+        "Bachelor of Commerce (Autonomous)",
+        "Bachelor of Commerce (Banking &amp;Isurance) (Autonomous)",
+        "Bachelor of Commerce (Financial Management) (Autonomous)",
+        "Bachelor of Commerce(Accounting and Finance)(Autonomous)",
+        "Bachelor of Management Studies (E.M.E.) (Autonomous)",
+        "Bachelor of Science (Autonomous) (Fashion Design)"
+    ],
+    "R A Podar College of Commerce and Economics , City: Mumbai (MU-0161)": [
+        "Bachelor of Business Administration (Honours)(Autonomous) (Shipping and Logistics Management)",
+        "Bachelor of Commerce (Autonomous)",
+        "Bachelor of Commerce (Autonomous) (Actuarial Studies)",
+        "Bachelor of Commerce (Autonomous) (Financial Markets)",
+        "Bachelor of Management Studies (E.M.E.) (Autonomous)",
+        "Bachelor of Science (Autonomous)"
+    ],
+    "A B V M Agrawal Jatiya Koshs Ghanshyamdas Jalan College of Arts Commerce and Science , City: Mumbai (MU-0527)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science"
+    ],
+    "Aakash Degree College of Commerce , City: Mumbai (MU-0968)": [
+        "Bachelor of Commerce"
+    ],
+    "Achara College of Management Studies , City: Mumbai (MU-0819)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Anandibai Damodar Kale Shaikshanik Sansthas Degree College of Arts and Commerce , City: Mumbai (MU-0492)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Anjanet Welfare and Education Society , City: Thane (MU-1169)": [
+        "Bachelor of Commerce"
+    ],
+    "Anjuman Islam Janjira Degree College of Commerce , City: Raigad (MU-1009)": [
+        "Bachelor of Commerce"
+    ],
+    "Bharat Education Societys Sant Gadge Maharaj College of Commerce and Economics , City: Mumbai (MU-0016)": [
+        "Bachelor of Commerce"
+    ],
+    "Bharat Friends Associations Bharat College of Commerce , City: Thane (MU-0468)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Bhavna Trust Degree College of Commerce and Science , City: Mumbai (MU-0632)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Bombay Bunts Associations Bunts College of Higher Education Night College , City: Mumbai (MU-0474)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Bombay Bunts Associations Bunts Institute for Higher Education , City: Navi Mumbai (MU-0827)": [
+        "Bachelor of Commerce"
+    ],
+    "D V S College of Commerce , City: Navi Mumbai (MU-0817)": [
+        "Bachelor of Commerce"
+    ],
+    "Dadasaheb Tirodkar Educational Academy Padmashri Babasaheb Vengurlekar Mahavidhyalaya Pandurtitha , City: Sindhudurg (MU-1007)": [
+        "Bachelor of Commerce"
+    ],
+    "Dalvi College of Arts Commerce and Science, Shenale , City: Mumbai (MU-1177)": [
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "Dapoli Education Societys Dapoli Urban Bank Senior Science College , City: Ratnagiri (MU-0484)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Dnyandeep Shikshan Prasarak Manadals College Science and Commerce , City: Ratnagiri (MU-0916)": [
+        "Bachelor of Commerce",
+        "Bachelor of Science (Computer Science)",
+        "Bachelor of Science (Hospitality Studies)"
+    ],
+    "Dr Arvind M Pradhan Senior College of Commerce and Arts Mulund Mumbai Suburban , City: Mulund (MU-1201)": [
+        "Bachelor of Commerce"
+    ],
+    "Ghanshyamdas Saraf College of Arts and Commerce , City: Mumbai (MU-0059)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Financial Market)",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Gokhale Education Societys N B Mehta Valvada Science College , City: Thane (MU-0432)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Science",
+        "Bachelor of Science (Biotechnology)",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Goodwill International Foudations Shree Jaya Anand Commerce and Science Senior College Night , City: Thane (MU-0175)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)"
+    ],
+    "Gurukul Educational Institutions Gurukul College of Commerce , City: Mumbai (MU-0551)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Haji Jamaluddin Thim Trust, Thim College of Arts, Commerce and Science, Bhoisar , City: Mumbai (MU-1171)": [
+        "Bachelor of Commerce",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Hind Seva Parishads Public Night Degree College of Arts and Commerce , City: Mumbai (MU-0501)": [
+        "Bachelor of Commerce"
+    ],
+    "Hirwal Education Trusts Hirwal Night College , City: Raigad (MU-1112)": [
+        "Bachelor of Commerce"
+    ],
+    "Hitkarni College of Commerce Mankhued , City: MUMBAI (MU-1181)": [
+        "Bachelor of Commerce"
+    ],
+    "Ideal College of Arts Commerce and Science Wada , City: Palghar (MU-1206)": [
+        "Bachelor of Commerce"
+    ],
+    "J B Sawant Education Societys Tikambhai Metha Commerce College , City: Raigad (MU-0284)": [
+        "Bachelor of Commerce"
+    ],
+    "JES College of Commerce Science and Information Technology , City: Mumbai (MU-0956)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Jai Bharat College of Commerce , City: Mumbai (MU-0733)": [
+        "Bachelor of Commerce"
+    ],
+    "K H M W College of Commerce , City: Mumbai (MU-0436)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)"
+    ],
+    "KARACHI MAHARASHTRIYA SHIKSHAA PRASARAK MANDAL , City: Mumbai (MU-1225)": [
+        "Bachelor of Commerce"
+    ],
+    "Kaiser College of Commerce , City: Mumbai (MU-0907)": [
+        "Bachelor of Commerce"
+    ],
+    "Karnataka Sanghs Manjunatha College of Arts and Commerce , City: Thane (MU-0520)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Kasarde Vikas Mandals Degree College of Commerce and Science , City: Sindhudurg (MU-1059)": [
+        "Bachelor of Commerce"
+    ],
+    "Ladhidevi Ramdhar Maheshwari Night College of Commerce , City: Mumbai (MU-0526)": [
+        "Bachelor of Commerce"
+    ],
+    "Laxmichand Golwala College of Commerce and Economics , City: Mumbai (MU-0959)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Financial Market)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Lilavati Lalji Dayal Night College of Commerce , City: Mumbai (MU-1079)": [
+        "Bachelor of Commerce"
+    ],
+    "M S P Mandal s G R Patil College of Commerce and Science , City: Thane (MU-0185)": [
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "M V Ms College of Commerce and Science, Andheri West , City: Mumbai (MU-0657)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "MCTs Smt Sushiladevi Deshmukh College of Arts Science and Commerce , City: Navi Mumbai (MU-0914)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Mahatma Education Societys Night College of Commerce , City: Mumbai (MU-0122)": [
+        "Bachelor of Commerce"
+    ],
+    "Mahatma Phule Education Societys Day College of Arts and Commerce , City: Mumbai (MU-0737)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Mahatma Phule Shikshan Sansthas Hon Manohar Joshi College of Arts Commerce and Science , City: Mumbai (MU-0597)": [
+        "Bachelor of Commerce"
+    ],
+    "Mahendra Pratap Sharda Prasad Singh College of Arts Commerce and Science , City: Mumbai (MU-0729)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Mata Vaishnodevi College Of Arts Commerce and Science , City: Sindhudurg (MU-0071)": [
+        "Bachelor of Commerce",
+        "Bachelor of Science (Hospitality Studies)"
+    ],
+    "Matruchaya Degree College of Commerce , City: Mumbai (MU-0750)": [
+        "Bachelor of Commerce"
+    ],
+    "Mumbai College of Arts Commerce and Science , City: Mumbai (MU-0608)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science (Biotechnology)",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Nagrik Shikshan Sansthas College of Commerce and Economics , City: Mumbai (MU-0140)": [
+        "Bachelor of Commerce"
+    ],
+    "National Centre for Rural Developments Sterling College of Arts Science and Commerce , City: Navi Mumbai (MU-0552)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Niranjana Majithia College of Commerce , City: Mumbai (MU-0635)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Nirmal Degree College of Commerce , City: Mumbai (MU-0826)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Nirmala College of Commerce , City: Mumbai (MU-0825)": [
+        "Bachelor of Commerce"
+    ],
+    "Oriental Educational Societys Oriental College of Commerce and Management , City: Mumbai (MU-0589)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "PUne Vidyarthi Grihas College of Science and Technology , City: Mumbai (MU-0866)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Padmashree Bhausaheb Vartak College , City: Vasai (MU-1066)": [
+        "Bachelor of Commerce"
+    ],
+    "Patuck Polytechnic Trust Patuck Gala College of Commerce , City: Mumbai (MU-0628)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Peoples Education Society Dr Ambedkar College of Commerce and Economics , City: Mumbai (MU-0045)": [
+        "Bachelor of Commerce"
+    ],
+    "Pragat Samajik Shikshan Society Dr Babasaheb Ambedkar College of Science Advocate Gurunath Kulkarni College of Commerce and Management , City: Thane (MU-0893)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Financial Market)",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Priyadarshani Shaikshanik and Samajik Vikas Mandal, Sailee Degree College, boriwali , City: Mumbai (MU-1254)": [
+        "Bachelor of Commerce"
+    ],
+    "Professor Manjunath Acharya College of Professional Studies, Shelu , City: Kharghar (MU-1233)": [
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "R N Education Trusts Reckon Women Degree College of Commerce , City: Palghar (MU-1099)": [
+        "Bachelor of Commerce"
+    ],
+    "R R International Junior and Senior College for Science and Commerce , City: Mumbai (MU-1110)": [
+        "Bachelor of Commerce"
+    ],
+    "Rajasthan Relief Society Bajaj Degree Collage of Arts Commerce and Science , City: Malad East (MU-1236)": [
+        "Bachelor of Commerce"
+    ],
+    "Rajiv Gandhi College of Arts Commerce and Science , City: Navi Mumbai (MU-0591)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Ramsheth Thakur College of Commerce and Science , City: Navi Mumbai (MU-0711)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Rashtriya Bahu Uddeshiya Samajseva Mandals Priyadarshini Night College of Arts and Commerce , City: Mumbai (MU-0624)": [
+        "Bachelor of Commerce"
+    ],
+    "S K Rai College of Arts Science and Commerce , City: Mumbai (MU-0620)": [
+        "Bachelor of Commerce"
+    ],
+    "Sadubella Education Societys J Watumull Sadubella Girls College , City: Thane (MU-0457)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Banking and Insurance)"
+    ],
+    "Samajonnati Shikshan Sansthas Commerce College , City: Mumbai (MU-1141)": [
+        "Bachelor of Commerce"
+    ],
+    "Sanskardham Kelwani Mandals Jashbhai Maganbhai Patel College of Commerce , City: Mumbai (MU-0196)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)"
+    ],
+    "Seva Sadan College of Arts Science and Commerce , City: Thane (MU-0960)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Financial Market)",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Shaheed D T Kalani Memorial Trusts College of Arts Science and Commerce , City: Thane (MU-0586)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Shahu Shikshan Sansthas Pandharpur Nalanda College of Arts Science and Commerce , City: Mumbai (MU-0553)": [
+        "Bachelor of Commerce"
+    ],
+    "Shetkari Shikshan Sansthas College of Management Studies and Commerce , City: Navi Mumbai (MU-0818)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Shivai Vidya Prasarak Mandals Shivai Arts Science and Commerce Night College , City: Thane (MU-1106)": [
+        "Bachelor of Commerce"
+    ],
+    "Shivaji Shikshan Sansthas Science and Commerce College Night , City: Mumbai (MU-1061)": [
+        "Bachelor of Commerce",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Shree Panchal Samaj Madhyavarti Mandals Yehwantrao Chaphekar college of Commerce and Management , City: Thane (MU-0363)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Shri Chinai College of Commerce and Economics , City: Mumbai (MU-0034)": [
+        "Bachelor of Commerce"
+    ],
+    "Shri Dombivali Mitra Mandals Matrushri Kashiben Motilal Patel Senior College of Commerce and Science , City: Thane (MU-0862)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Shri G P M Degree College , City: Mumbai (MU-0382)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Shri N B Mehta Charity Education Trust Prakash Degree College of Commerce and Science , City: Mumbai (MU-0639)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Shri N B Mehta Charity Education Trust Prakash Degree Night College of Commerce and Science , City: Mumbai (MU-0832)": [
+        "Bachelor of Commerce"
+    ],
+    "Shri Saibaba Shikshan Sanstha ARTS SCIENCE AND COMMERCE DEGREE COLLEGE , City: Palghar (MU-1231)": [
+        "Bachelor of Commerce"
+    ],
+    "Shri Yashawantrao Chavan Shikshan Prasharak Mandals Sinhgad College of Commerce , City: Mumbai (MU-0868)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Smt Devkiba Mohansinhji Chauhan College of Commerce and Science , City: Mumbai (MU-0141)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science"
+    ],
+    "Smt Fatimabai M S Educational Trusts Mumbra College of Arts and Commerce Night , City: Thane (MU-0557)": [
+        "Bachelor of Commerce"
+    ],
+    "Smt K L Tiwari Degree College of Commerce and Science Nalasopara , City: Palghar (MU-1205)": [
+        "Bachelor of Commerce"
+    ],
+    "Sonopant Dandekar Shikshan Mandalis Arts Commerce and Science Womens College , City: Palghar (MU-1058)": [
+        "Bachelor of Commerce"
+    ],
+    "St Arnolds Night Degree College of Arts and Commerce , City: Andhri (MU-1207)": [
+        "Bachelor of Commerce"
+    ],
+    "St Paul College , City: Thane (MU-0362)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "St Rocks Degree College of Commerce and Science , City: Mumbai (MU-0636)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Financial Market)",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Suman Education Societys LN College of Commerce and Science Night , City: Mumbai (MU-0669)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Financial Market)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Swami Hansmuni Maharaj Degree College of Commerce , City: Thane (MU-0941)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Swayam Siddhi Mitra Sangh Night Degree College , City: Bhiwandi (MU-1056)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Swayam Siddhi Mitra Sanghs Degree College , City: Thane (MU-0933)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "The Borivli Education Societys Matushri Pushpaben Vinubhai Valiya College of Commerce , City: Mumbai (MU-0406)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "The East Kalyan Welfare Societys Model College of Science and Commerce , City: Thane (MU-0645)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "The Sarvajanik Shikshan Sansthas College of Commerce , City: Mumbai (MU-0517)": [
+        "Bachelor of Commerce"
+    ],
+    "Tilak Education Societys J K College of Science and Commerce , City: Navi Mumbai (MU-0970)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Tilak Nagar Shikshan Prasark Mandal , City: Dombivli (MU-1187)": [
+        "Bachelor of Commerce"
+    ],
+    "Uran Education Societys College of Management and Technology , City: RAIGAD (MU-0871)": [
+        "Bachelor of Commerce"
+    ],
+    "V K Krishna Menon College of Commerce and Economics and Sharad Shankar Dighe College of Science , City: Mumbai (MU-0414)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Vedanta College of Management and Information Technology , City: Thane (MU-0974)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Versova Education Trusts Smt Kamala Mehta V W A College of Commerce , City: Mumbai (MU-0554)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Vidya Vikas Education Trusts Lords Universal College Night , City: Mumbai (MU-0999)": [
+        "Bachelor of Commerce"
+    ],
+    "Vidyaniketan Degree College of Commerce , City: Mumbai (MU-0829)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Vidyavardhini Mandal ICE Commerce of Hotel Management College, Darawe gaon , City: Nerul (MU-1196)": [
+        "Bachelor of Commerce",
+        "Bachelor of Science"
+    ],
+    "Vishweshwar Education Societys Western College of Commerce and Business Management , City: Navi Mumbai (MU-0530)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Wada Nirmit Degree collage of Arts Commerce and Scinece , City: Palghar (MU-1175)": [
+        "Bachelor of Commerce"
+    ],
+    "Wada Nirmiti Education Societys Vidya Varidhi Degree College of Arts and Commerce , City: Palghar (MU-1105)": [
+        "Bachelor of Commerce",
+        "Bachelor of Science (Data Science)",
+        "Bachelor of Science (Hospitality Studies)"
+    ],
+    "Y and M A K I's College of arts, Science and Commerce, Shrivardhan , City: Mumbai (MU-1249)": [
+        "Bachelor of Commerce"
+    ],
+    "the Byramjee Jeejeebhoy Parsee Charitable Trusts College of Commerce , City: Mumbai (MU-0500)": [
+        "Bachelor of Commerce",
+        "Bachelor of Commerce (Accounting and Finance)"
+    ],
+    "Anjuman Islam Janjira Degree College of Science , City: Raigad (MU-0957)": [
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Audyogik Shikshan Mandals Institute of Management and Computer Studies , City: Thane (MU-0661)": [
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Financial Market)",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Gurukul College , City: Ratnagiri (MU-0980)": [
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Financial Market)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "MSG SGKM College of Arts Science and Commerce , City: Mumbai (MU-0930)": [
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Nagar Yuvak Shikshan Sansthas New Horizon College of Commerce , City: Navi Mumbai (MU-0294)": [
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Sahyog Pratishthans Sahyag College Of Management Studies , City: Thane (MU-0379)": [
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science (Hospitality Studies)"
+    ],
+    "Sasmiras Institute of Commerce and Science , City: Mumbai (MU-1075)": [
+        "Bachelor of Commerce (Accounting and Finance)"
+    ],
+    "Shri D D Vispute College of Science Commerce and Management , City: Raigad (MU-0673)": [
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science (Biotechnology)",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Wada College of Management and Science , City: Thane (MU-0973)": [
+        "Bachelor of Commerce (Accounting and Finance)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)",
+        "Bachelor of Science (Data Science)",
+        "Bachelor of Science (Hospitality Studies)"
+    ],
+    "Dhirajlal Talakchand Sankalchand Shah College of Commerce , City: Mumbai (MU-0040)": [
+        "Bachelor of Commerce (Autonomous)",
+        "Bachelor of Commerce(Accounting and Finance)(Autonomous)",
+        "Bachelor of Management Studies (E.M.E.) (Autonomous)",
+        "Bachelor of Science (Data Science) (Autonomous)"
+    ],
+    "K J Somaiya College of Science and Commerce , City: Mumbai (MU-0095)": [
+        "Bachelor of Commerce (Autonomous)",
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science (Autonomous)"
+    ],
+    "Narsee Monjee College of Commerce and Economics , City: Mumbai (MU-0205)": [
+        "Bachelor of Commerce (Autonomous)",
+        "Bachelor of Commerce (Autonomous) (Economics and Analytics)",
+        "Bachelor of Commerce (Autonomous) (Economics)",
+        "Bachelor of Commerce (Autonomous) (Management and Finance)",
+        "Bachelor of Commerce (Financial Management) (Autonomous)",
+        "Bachelor of Commerce (Financial Market) (Autonomous)",
+        "Bachelor of Commerce(Accounting and Finance)(Autonomous)",
+        "Bachelor of Management Studies (E.M.E.) (Autonomous)"
+    ],
+    "South Indian Education Societys College of Commerce and Economics , City: Mumbai (MU-0499)": [
+        "Bachelor of Commerce (Autonomous)",
+        "Bachelor of Commerce (Autonomous) (International Accounting)",
+        "Bachelor of Commerce (Banking &amp;Isurance) (Autonomous)",
+        "Bachelor of Commerce (Financial Management) (Autonomous)",
+        "Bachelor of Commerce(Accounting and Finance)(Autonomous)",
+        "Bachelor of Management Studies (E.M.E.) (Autonomous)"
+    ],
+    "South Indians Welfare Societys N R Swamy College of Commerce and Economics and Smt Thirumalai College of Science , City: Mumbai (MU-0311)": [
+        "Bachelor of Commerce (Autonomous)",
+        "Bachelor of Commerce (Banking &amp;Isurance) (Autonomous)",
+        "Bachelor of Commerce(Accounting and Finance)(Autonomous)",
+        "Bachelor of Management Studies (E.M.E.) (Autonomous)",
+        "Bachelor of Science (Autonomous)"
+    ],
+    "IBSAR College of Commerce and Science , City: Raigad (MU-0934)": [
+        "Bachelor of Commerce (Banking and Insurance)",
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Regal Education Societys Regal college of Hotel Management and Tourism , City: Ratnagiri (MU-0881)": [
+        "Bachelor of Commerce (Financial Market)",
+        "Bachelor of Science (Hospitality Studies)"
+    ],
+    "Deep Education Societys MIDC College of Management , City: Thane (MU-0266)": [
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Hirwal Education Trusts College of Computer Science and Information Technology , City: Raigad (MU-0924)": [
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Lokmanya Trusts Deshbhakt Shankarrao Gavankar College of Commerce , City: Sindhudurg (MU-0938)": [
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Regal College of Hotel and Turisum Management , City: Sindhudurg (MU-0173)": [
+        "Bachelor of Commerce (Management Studies)",
+        "Bachelor of Science (Hospitality Studies)"
+    ],
+    "Vishwabhushan Bharatratna Dr Babasaheb Ambedkar College Ambadave , City: Ratanagiri (MU-0212)": [
+        "Bachelor of Commerce (Management Studies)"
+    ],
+    "Nalanda Nritya Kala Mahavidyalaya , City: Mumbai (MU-0142)": [
+        "Bachelor of Fine Arts - Advanced Diploma in Dance (Kathak)",
+        "Bachelor of Fine Arts - Foundation Course",
+        "Bachelor of Performing Arts - Dance"
+    ],
+    "Aditya College of Architecture , City: Mumbai (MU-0224)": [
+        "Bachelor of Fine Arts - Applied Art"
+    ],
+    "B S Bandekar College of Fine Art , City: Sindhudurg (MU-0044)": [
+        "Bachelor of Fine Arts - Applied Art"
+    ],
+    "Padmabhushan Vasantdada Patil Prathisthan Engineering College , City: Mumbai (MU-0356)": [
+        "Bachelor of Fine Arts - Applied Art",
+        "Bachelor of Fine Arts - Painting"
+    ],
+    "Rachana Sansads College of Applied Arts and Craft , City: Mumbai (MU-0649)": [
+        "Bachelor of Fine Arts - Applied Art"
+    ],
+    "Sir J J Institute of Applied Art , City: Mumbai (MU-0214)": [
+        "Bachelor of Fine Arts - Applied Art"
+    ],
+    "Viva Institute of Applied Art Arts and Craft , City: Thane (MU-0966)": [
+        "Bachelor of Fine Arts - Applied Art",
+        "Bachelor of Fine Arts - Painting"
+    ],
+    "Sir J J School of Art , City: Mumbai (MU-0215)": [
+        "Bachelor of Fine Arts - Ceramics",
+        "Bachelor of Fine Arts - Interior Decoration",
+        "Bachelor of Fine Arts - Metal Work",
+        "Bachelor of Fine Arts - Painting",
+        "Bachelor of Fine Arts - Sculpture",
+        "Bachelor of Fine Arts - Textile Design"
+    ],
+    "Devrukh College of Art and Design , City: Ratnagiri (MU-0965)": [
+        "Bachelor of Fine Arts - Painting"
+    ],
+    "Department of Music , City: Kalina (Mumbai) (MU-337)": [
+        "Bachelor of Performing Arts(Music-Hindustani Vocal)",
+        "Bachelor of Performing Arts(Music-Sitar)",
+        "Bachelor of Performing Arts(Music-Tabla)"
+    ],
+    "Department of Physical Education , City: Kalina (Mumbai) (MU-798)": [
+        "Bachelor of Physical Education(Bachelor of Physical Education )"
+    ],
+    "G M Vedak College of Science , City: Raigad (MU-0937)": [
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Kisan Kathore Science College, mumbai , City: MUMBAI (MU-1173)": [
+        "Bachelor of Science"
+    ],
+    "Konkan Education Societys Anandibai Pradhan Science College , City: Raigad (MU-0504)": [
+        "Bachelor of Science",
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Shivai Prabodhini Sansthas Aamdar Daulat Daroda College of Science , City: Palghar (MU-0049)": [
+        "Bachelor of Science"
+    ],
+    "Shramik Vidyarthi Dnyanseva Sansthas Amdar Deepakbhai Kesarkar Science College , City: Sindhudurg (MU-0166)": [
+        "Bachelor of Science"
+    ],
+    "HAL Pravara Aviation Institute , City: Nashik (MU-0061)": [
+        "Bachelor of Science (Aeronautics) (Avionics)",
+        "Bachelor of Science (Aeronautics) (Mechanical)"
+    ],
+    "The Bombay Flying Clubs College of Aviation , City: Mumbai (MU-0985)": [
+        "Bachelor of Science (Aeronautics) (Avionics)",
+        "Bachelor of Science (Aeronautics) (Mechanical)",
+        "Bachelor of Science (Aviation)"
+    ],
+    "Wingsss College of Aviation Technology , City: Pune (MU-1092)": [
+        "Bachelor of Science (Aeronautics) (Avionics)",
+        "Bachelor of Science (Aeronautics) (Mechanical)"
+    ],
+    "Institute of Aviation and Aviation Safety , City: Mumbai (MU-0644)": [
+        "Bachelor of Science (Aviation)"
+    ],
+    "Mahatma Gandhi Missions College of Science and Commerce , City: Navi Mumbai (MU-0549)": [
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Sahyadri Shikshan Sansthas Institute of Computer Science and Information Technology , City: Ratnagiri (MU-0559)": [
+        "Bachelor of Science (Computer Science)"
+    ],
+    "Deep Education Societys Deeps Degree College , City: Palghar (MU-1017)": [
+        "Bachelor of Science (Data Science)",
+        "Bachelor of Science (Hospitality Studies)"
+    ],
+    "Institute of Forensic Science , City: Mumbai (MU-0853)": [
+        "Bachelor of Science (Forensic Science)"
+    ],
+    "the College of Home Science , City: Mumbai (MU-0259)": [
+        "Bachelor of Science (Home Science)"
+    ],
+    "the Bombay College of Pharmacy , City: Mumbai (MU-0249)": [
+        "Bachelor of Science (Honours) (Autonomous) (Integrative Nutrition &amp;Dietetics)"
+    ],
+    "Anjuman I Islams College of Hotel and Tourism Management Studies And Research , City: Mumbai (MU-0766)": [
+        "Bachelor of Science (Hospitality Studies)"
+    ],
+    "Anjuman I Islams Institute of Hospitality Management , City: Mumbai (MU-0508)": [
+        "Bachelor of Science (Hospitality Studies)"
+    ],
+    "Apeejay Institute of Hospitality , City: Navi Mumbai (MU-0897)": [
+        "Bachelor of Science (Hospitality Studies)"
+    ],
+    "Arun Muchhala International College of Hotel Management , City: Thane (MU-0519)": [
+        "Bachelor of Science (Hospitality Studies)"
+    ],
+    "B P Marine Academy , City: Navi Mumbai (MU-0800)": [
+        "Bachelor of Science (Hospitality Studies)"
+    ],
+    "Bharati Vidyapeeths Institute of Hotel Management and Catering Technology , City: Navi Mumbai (MU-0581)": [
+        "Bachelor of Science (Hospitality Studies)"
+    ],
+    "Dnyanvardhini Education Societys Mumbai College of Management Studies , City: Thane (MU-1104)": [
+        "Bachelor of Science (Hospitality Studies)"
+    ],
+    "G D Ambekar Pratishthans College of Management and Technology , City: Mumbai (MU-0895)": [
+        "Bachelor of Science (Hospitality Studies)"
+    ],
+    "Jaihind Grammonati Sansthas Jaihind College of Science , City: Sindhudurg (MU-0964)": [
+        "Bachelor of Science (Hospitality Studies)"
+    ],
+    "Koknes Kohinoor Technical Trusts Kohinoor College of Hotel and Tourism Management Studies , City: Ratnagiri (MU-0672)": [
+        "Bachelor of Science (Hospitality Studies)"
+    ],
+    "Kunbi Shikshan Prasarak Mandals Mamasaheb Bhuwad College of Commerce and Hotel Management , City: Ratnagiri (MU-1115)": [
+        "Bachelor of Science (Hospitality Studies)"
+    ],
+    "Lavel Vibhag Shikshan Prasarak Mandal Late Shri Padmashri Shri M Tatha Annasaheb behere Institute of Hotel Management , City: Ratnagiri (MU-1091)": [
+        "Bachelor of Science (Hospitality Studies)"
+    ],
+    "Nava Balodyan Trusts Kohinoor College of Hotel and Tourism Management Studies , City: Mumbai (MU-0580)": [
+        "Bachelor of Science (Hospitality Studies)"
+    ],
+    "Navyug Vidyapeeth Trust College of Arts Science and Commerce , City: Raigad (MU-0590)": [
+        "Bachelor of Science (Hospitality Studies)"
+    ],
+    "Saeesh College of Computer Science and Technology Varsoli , City: Alibag (MU-1065)": [
+        "Bachelor of Science (Hospitality Studies)"
+    ],
+    "Sahyadri College of Hotel Management and Tourism , City: Ratnagiri (MU-0852)": [
+        "Bachelor of Science (Hospitality Studies)"
+    ],
+    "Sophia Smt Manorama Devi Somani College , City: Mumbai (MU-0963)": [
+        "Bachelor of Science (Hospitality Studies)"
+    ],
+    "B. P. Marine Academy, Panvel , City: Mumbai (MU-2014)": [
+        "Bachelor of Science (Nautical Science)"
+    ]
+};
+
+        const collegeInput = document.getElementById('collegeInput');
+        const suggestions = document.getElementById('suggestions');
+        const courseList = document.getElementById('courseList');
+
+        collegeInput.addEventListener('input', showSuggestions);
+        collegeInput.addEventListener('focus', showSuggestions);
+
+        function showSuggestions() {
+            const query = collegeInput.value.toLowerCase();
+            suggestions.innerHTML = '';
+
+            const matchedColleges = Object.keys(collegeData).filter(college => 
+                college.toLowerCase().includes(query)
+            );
+
+            matchedColleges.forEach(college => {
+                const suggestionItem = document.createElement('li');
+                suggestionItem.textContent = college;
+                suggestionItem.addEventListener('click', () => {
+                    collegeInput.value = college;
+                    displayCourses(college);
+                    suggestions.innerHTML = '';
+                });
+                suggestions.appendChild(suggestionItem);
+            });
+        }
+
+        function displayCourses(college) {
+            courseList.innerHTML = '';
+            if (collegeData[college]) {
+                collegeData[college].forEach(course => {
+                    const courseItem = document.createElement('li');
+                    courseItem.textContent = course;
+                    courseList.appendChild(courseItem);
+                });
+            }
+        }
+    </script>
+</body>
+</html>
