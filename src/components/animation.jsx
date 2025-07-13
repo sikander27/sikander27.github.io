@@ -1,42 +1,46 @@
 import React, { useState, useEffect } from 'react';
-
-export const AnimatedTitle = ({ title }) => {
-  const [displayText, setDisplayText] = useState('');
-  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+// --- ANIMATION COMPONENTS ---
+export const AnimatedTitle = () => {
+  const [text, setText] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [loopNum, setLoopNum] = useState(0);
+  const [typingSpeed, setTypingSpeed] = useState(150);
+  const phrases = ["I am a Problem Solver", "love everything about code", "Senior Software Engineer"];
 
   useEffect(() => {
-    let interval = null;
-    let iteration = 0;
-    
-    clearInterval(interval);
-    
-    interval = setInterval(() => {
-      setDisplayText(
-        title
-          .split("")
-          .map((letter, index) => {
-            if(index < iteration) {
-              return title[index];
-            }
-          
-            return letters[Math.floor(Math.random() * 26)]
-          })
-          .join("")
-      );
-      
-      if(iteration >= title.length){ 
-        clearInterval(interval);
-      }
-      
-      iteration += 1 / 3;
-    }, 40);
+    const handleTyping = () => {
+      const i = loopNum % phrases.length;
+      const fullText = phrases[i];
 
-    return () => clearInterval(interval);
-  }, [title]);
+      setText(
+        isDeleting
+          ? fullText.substring(0, text.length - 1)
+          : fullText.substring(0, text.length + 1)
+      );
+
+      setTypingSpeed(isDeleting ? 80 : 150);
+
+      if (!isDeleting && text === fullText) {
+        // Pause at end of word
+        if (i === phrases.length - 1) {
+            // Last phrase, so we stop here
+            return;
+        }
+        setTimeout(() => setIsDeleting(true), 1000);
+      } else if (isDeleting && text === '') {
+        setIsDeleting(false);
+        setLoopNum(loopNum + 1);
+      }
+    };
+
+    const typingTimeout = setTimeout(handleTyping, typingSpeed);
+    return () => clearTimeout(typingTimeout);
+  }, [text, isDeleting, typingSpeed]);
 
   return (
-    <h2 className="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white font-mono tracking-tighter">
-      {displayText}
+    <h2 className="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white font-mono tracking-tighter h-20">
+      {text}
+      <span className="border-r-2 border-slate-900 dark:border-slate-200 animate-pulse"></span>
     </h2>
   );
 };
