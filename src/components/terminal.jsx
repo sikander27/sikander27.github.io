@@ -201,7 +201,9 @@ export const Terminal = ({ onExit, onLaunchGame }) => {
 
         if (commands[command]) {
             const output = commands[command](args);
-            setHistory([...newDisplayHistory, ...output]);
+            if (command !== 'clear') {
+                setHistory([...newDisplayHistory, ...output]);
+            }
         } else {
             setHistory([...newDisplayHistory, { type: 'error', text: `command not found: ${command}` }]);
         }

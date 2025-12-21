@@ -176,7 +176,7 @@ export const ExperienceCard = ({ job }) => {
                         <h3 className="font-bold text-slate-800 dark:text-slate-200">{job.role}</h3>
                         <time className="font-caveat font-medium text-sm text-teal-600 dark:text-teal-400">{job.period}</time>
                     </div>
-                    <div className="text-slate-500 dark:text-slate-400 font-semibold mb-2">{job.company}</div>
+                    <div className="text-slate-500 dark:text-slate-400 font-semibold mb-2"><a href={job.companyLink} target="_blank" className="hover:text-teal-500 dark:hover:text-teal-400 transition-colors">{job.company}</a></div>
                     <div ref={listRef} className={`transition-all duration-300 ${!isExpanded ? 'max-h-20 overflow-hidden' : 'max-h-96'}`}>
                         <ul className="list-disc list-inside space-y-1 text-slate-500 dark:text-slate-400 text-sm">
                             {job.description.map((point, index) => (

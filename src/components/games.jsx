@@ -145,6 +145,53 @@ export const SnakeGame = () => {
         return () => document.removeEventListener('keydown', handleKeyDown);
     }, [direction]);
 
+    // Touch support for mobile
+    useEffect(() => {
+        let touchStartX = 0;
+        let touchStartY = 0;
+
+        const handleTouchStart = (e) => {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+        };
+
+        const handleTouchEnd = (e) => {
+            const touchEndX = e.changedTouches[0].clientX;
+            const touchEndY = e.changedTouches[0].clientY;
+            
+            const deltaX = touchEndX - touchStartX;
+            const deltaY = touchEndY - touchStartY;
+            
+            // Minimum swipe distance to register
+            const minSwipeDistance = 30;
+            
+            if (Math.abs(deltaX) < minSwipeDistance && Math.abs(deltaY) < minSwipeDistance) {
+                return;
+            }
+            
+            let newDirection;
+            if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                // Horizontal swipe
+                newDirection = deltaX > 0 ? { x: 1, y: 0 } : { x: -1, y: 0 };
+            } else {
+                // Vertical swipe
+                newDirection = deltaY > 0 ? { x: 0, y: 1 } : { x: 0, y: -1 };
+            }
+            
+            if (direction.x !== -newDirection.x || direction.y !== -newDirection.y) {
+                setDirection(newDirection);
+            }
+        };
+
+        document.addEventListener('touchstart', handleTouchStart);
+        document.addEventListener('touchend', handleTouchEnd);
+        
+        return () => {
+            document.removeEventListener('touchstart', handleTouchStart);
+            document.removeEventListener('touchend', handleTouchEnd);
+        };
+    }, [direction]);
+
     useEffect(() => {
         if (gameOver) return;
 
