@@ -43,7 +43,8 @@ export const portfolioData = {
         "Started as SDE-2, owning end-to-end frontend and backend development, fixing critical bugs and delivering features across Django (Tastypie) and AngularJS based systems.",
         "Promoted to Team Lead, currently managing and mentoring a 7-member engineering team, driving execution, code quality, and delivery in collaboration with Product Managers.",
         "Led company-wide architecture migration to a modular, scalable codebase involving 40+ developers, improving maintainability, development velocity, and long-term extensibility.",
-        "Drove major performance optimizations, reducing page render time by migrating to Jinja templates and bringing multiple APIs under 200ms latency through caching (Redis), query optimization, async processing (Celery/RabbitMQ), and architectural improvements."
+        "Drove major performance optimizations, reducing page render time by migrating to Jinja templates and bringing multiple APIs under 200ms latency through caching (Redis), query optimization, async processing (Celery/RabbitMQ), and architectural improvements.",
+        "Tech Stack: Django (Tastypie), AngularJS, HTML, CSS, JavaScript, AWS, Redis, Celery, RabbitMQ, Elasticsearch, Sentry, Datadog."
       ]
     },
     { 
