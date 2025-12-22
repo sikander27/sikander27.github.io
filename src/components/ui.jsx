@@ -25,7 +25,7 @@ export const Skills = () => (
           <h3 className="text-lg font-semibold mb-3 text-slate-700 dark:text-slate-300">{category}</h3>
           <ul className="flex flex-wrap gap-2">
             {skillsList.map((skill, index) => (
-              <li key={index} className="bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-sm font-medium px-3 py-1 rounded-md">
+              <li key={index} className="hover:bg-teal-300 hover:text-teal-800 bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-sm font-medium px-3 py-1 rounded-md">
                 {skill}
               </li>
             ))}
